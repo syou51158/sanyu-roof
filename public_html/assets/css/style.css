@@ -804,6 +804,13 @@ ul {
         z-index: 2000;
         box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
         border-top: 1px solid #ddd;
+        transition: transform 0.3s ease-in-out;
+        transform: translateY(100%);
+        /* Default hidden */
+    }
+
+    .fixed-footer-grid.visible {
+        transform: translateY(0);
     }
 
     .footer-btn {

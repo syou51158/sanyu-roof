@@ -60,5 +60,37 @@
 }
 </style>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const footer = document.querySelector('.fixed-footer-grid');
+    let isScrolling;
+
+    if (footer) {
+        window.addEventListener('scroll', function() {
+            // Show footer on scroll
+            footer.classList.add('visible');
+
+            // Clear our timeout throughout the scroll
+            window.clearTimeout(isScrolling);
+
+            // Set a timeout to run after scrolling ends
+            isScrolling = setTimeout(function() {
+                // Hide footer after 3 seconds of inactivity
+                footer.classList.remove('visible');
+            }, 3000);
+        }, false);
+        
+        // Also show on touch/click to ensure usability
+        window.addEventListener('touchstart', function() {
+             footer.classList.add('visible');
+             window.clearTimeout(isScrolling);
+             isScrolling = setTimeout(function() {
+                footer.classList.remove('visible');
+            }, 3000);
+        });
+    }
+});
+</script>
+
 </body>
 </html>
