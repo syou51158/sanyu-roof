@@ -10,12 +10,13 @@
     <title><?php echo isset($page_title) ? $page_title . ' | ' . SITE_NAME : SITE_NAME . ' | 京都市伏見区の屋根修理・雨漏り工事'; ?></title>
     <meta name="description" content="<?php echo isset($page_description) ? $page_description : '京都市伏見区の' . SITE_NAME . '。屋根修理、雨漏り修理、葺き替え工事ならお任せください。地域密着、職人直営で安心価格。お見積もり無料。'; ?>">
     <link rel="canonical" href="<?php echo SITE_URL . $_SERVER['REQUEST_URI']; ?>">
+    <link rel="icon" href="assets/img/favicon.png">
     
     <!-- OGP -->
     <meta property="og:title" content="<?php echo isset($page_title) ? $page_title . ' | ' . SITE_NAME : SITE_NAME; ?>">
     <meta property="og:type" content="website">
     <meta property="og:url" content="<?php echo SITE_URL . $_SERVER['REQUEST_URI']; ?>">
-    <meta property="og:image" content="<?php echo SITE_URL; ?>/assets/img/ogp.jpg">
+    <meta property="og:image" content="<?php echo SITE_URL; ?>/assets/img/ogp.png">
     <meta property="og:site_name" content="<?php echo SITE_NAME; ?>">
     <meta property="og:description" content="京都の屋根修理・雨漏り工事は山勇ルーフへ。">
     
