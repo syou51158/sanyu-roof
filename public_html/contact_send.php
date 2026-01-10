@@ -41,6 +41,9 @@ EOD;
 // 2. 自動返信メール作成 (メールアドレスがある場合)
 if (!empty($data['email'])) {
     $subject_user = "【" . SITE_NAME . "】お問い合わせありがとうございます";
+    $company_name = COMPANY_NAME;
+    $company_address = COMPANY_ADDRESS;
+    $company_phone = COMPANY_PHONE;
     $body_user = <<<EOD
 {$data['name']} 様
 
@@ -58,9 +61,9 @@ if (!empty($data['email'])) {
 ※このメールは自動送信されています。
 
 ==================================================
-{COMPANY_NAME}
-住所：{COMPANY_ADDRESS}
-電話：{COMPANY_PHONE}
+{$company_name}
+住所：{$company_address}
+電話：{$company_phone}
 ==================================================
 EOD;
 }

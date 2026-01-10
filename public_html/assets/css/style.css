@@ -5,9 +5,9 @@
    ========================================================================== */
 :root {
     /* Colors */
-    --color-primary: #F07343;
-    /* Yamaguchi Orange */
-    --color-primary-dark: #d65a2b;
+    --color-primary: #0066CC;
+    /* Yamaguchi Blue */
+    --color-primary-dark: #004C99;
     /* Darker shade for hover */
     --color-secondary: #383838;
     /* Dark Grey for Footer/Accents */
@@ -144,21 +144,27 @@ ul {
     align-items: center;
     padding: 15px 30px;
     font-weight: bold;
-    border-radius: 0;
-    /* Boxy style like reference */
+    border-radius: 6px;
+    /* Rounded corners for premium feel */
     transition: all 0.3s;
     cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* Soft shadow */
 }
 
 .btn-primary {
-    background-color: var(--color-primary);
+    background: linear-gradient(to bottom, var(--color-primary), var(--color-primary-dark));
+    /* Gradient */
     color: #fff;
-    border: 2px solid var(--color-primary);
+    border: none;
+    /* Remove border for cleaner gradient look */
 }
 
 .btn-primary:hover {
-    background-color: #fff;
-    color: var(--color-primary);
+    background: linear-gradient(to bottom, #3399FF, var(--color-primary));
+    /* Lighter gradient on hover */
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
 .btn-secondary {
@@ -256,14 +262,16 @@ ul {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #EF8556;
-    /* Slightly lighter orange/coral to match reference */
+    background: linear-gradient(135deg, #3399FF, #0066CC);
+    /* Gradient */
     color: #fff;
     padding: 10px;
-    border-radius: 4px;
+    border-radius: 6px;
+    /* Match global radius */
     text-decoration: none;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: background 0.3s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+    /* Stronger shadow */
+    transition: all 0.3s;
 }
 
 .btn-sidebar-mail:hover {
@@ -301,8 +309,8 @@ ul {
     display: block;
     font-size: 1.8rem;
     /* Slightly reduced font size for better fit */
-    color: #EF8556;
-    /* Orange text */
+    color: #0066CC;
+    /* Blue text */
     font-weight: bold;
     font-family: var(--font-serif);
     line-height: 1.1;
@@ -378,7 +386,7 @@ ul {
 }
 
 .nav-main .highlight {
-    color: #EF8556;
+    color: #0066CC;
 }
 
 
@@ -686,11 +694,15 @@ ul {
 .hero-subtitle {
     font-size: 1.5rem;
     color: #fff;
-    background: var(--color-primary);
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+    /* Gradient background */
     display: inline-block;
     padding: 10px 20px;
     margin-bottom: 30px;
     font-weight: bold;
+    border-radius: 4px;
+    /* Rounded corners */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .hero-description {
@@ -711,7 +723,11 @@ ul {
 .card {
     background: #fff;
     border: 1px solid #eee;
+    border-radius: 8px;
+    /* Rounded corners */
     transition: transform 0.3s, box-shadow 0.3s;
+    overflow: hidden;
+    /* Clip content to radius */
 }
 
 .card:hover {

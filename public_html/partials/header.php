@@ -113,10 +113,14 @@ require_once __DIR__ . '/../config/config.php';
     document.getElementById('menuToggle').addEventListener('click', function() {
         var sidebar = document.getElementById('sidebar');
         var overlay = document.getElementById('sidebarOverlay');
+        var footer = document.querySelector('.fixed-footer-grid'); // Get reference to footer
+        
         sidebar.classList.toggle('active');
         
         if (sidebar.classList.contains('active')) {
             overlay.style.display = 'block';
+            // Force hide footer when sidebar opens
+            if (footer) footer.classList.remove('visible');
         } else {
             overlay.style.display = 'none';
         }

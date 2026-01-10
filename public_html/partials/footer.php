@@ -63,11 +63,18 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const footer = document.querySelector('.fixed-footer-grid');
+    const sidebar = document.getElementById('sidebar'); // Get reference to sidebar
     let isScrolling;
 
     if (footer) {
-        window.addEventListener('scroll', function() {
-            // Show footer on scroll
+        const showFooter = function() {
+            // If sidebar is active, do NOT show footer
+            if (sidebar && sidebar.classList.contains('active')) {
+                footer.classList.remove('visible');
+                return;
+            }
+
+            // Show footer
             footer.classList.add('visible');
 
             // Clear our timeout throughout the scroll
@@ -75,19 +82,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Set a timeout to run after scrolling ends
             isScrolling = setTimeout(function() {
-                // Hide footer after 3 seconds of inactivity
+                // Hide footer faster (1.5s)
                 footer.classList.remove('visible');
-            }, 3000);
-        }, false);
-        
-        // Also show on touch/click to ensure usability
-        window.addEventListener('touchstart', function() {
-             footer.classList.add('visible');
-             window.clearTimeout(isScrolling);
-             isScrolling = setTimeout(function() {
-                footer.classList.remove('visible');
-            }, 3000);
-        });
+            }, 1500);
+        };
+
+        window.addEventListener('scroll', showFooter, false);
+        window.addEventListener('touchstart', showFooter, false);
     }
 });
 </script>

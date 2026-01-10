@@ -95,7 +95,6 @@ include 'partials/header.php';
                 <tr>
                     <th>住所</th>
                     <td>
-                        〒612-8487<br>
                         <?php echo COMPANY_ADDRESS; ?>
                     </td>
                 </tr>
@@ -120,10 +119,9 @@ include 'partials/header.php';
                 </tr>
             </table>
 
-            <!-- Google Maps Embed (羽束師菱川町511-1) -->
+            <!-- Google Maps Embed -->
             <div class="mt-20" style="height: 400px; background: #eee;">
-                 <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3270.505362945234!2d135.7311145763138!3d34.92719617283995!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6001058c4c3b6d4b%3A0x123456789abcdef!2z44CSNjEyLTg0ODcg5Lqs6YO95bqc5Lqs6YO95biC5LyP6KaL5Yy657695p2f5bir6Iqx5bed55S6!5e0!3m2!1sja!2sjp!4v1700000000000!5m2!1sja!2sjp" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-                 <p style="font-size:0.8rem; color:#666; text-align:right;">※地図はイメージです（実際の座標に合わせて調整してください）</p>
+                 <iframe src="https://maps.google.co.jp/maps?output=embed&q=京都府京都市伏見区羽束師菱川町569-42&t=m&z=15" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
             </div>
         </div>
     </section>

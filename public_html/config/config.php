@@ -6,7 +6,7 @@ define('SITE_NAME', '山勇ルーフ');
 define('SITE_URL', (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST']); // 自動取得
 define('COMPANY_NAME', '山勇ルーフ');
 define('COMPANY_OWNER', '山勇 太郎 (仮)');
-define('COMPANY_ADDRESS', '京都市伏見区羽束師菱川町511-1 / ディオフェルティ東向日2番館610');
+define('COMPANY_ADDRESS', '〒612-8487 京都府京都市伏見区羽束師菱川町５６９−４２');
 define('COMPANY_PHONE', '080-5706-7681');
 define('COMPANY_INVOICE', 'T4810438817670');
 
