@@ -1,0 +1,454 @@
+/* public_html/mail-setup/assets/style.css */
+
+:root {
+    /* Brand Colors (Sanyu Blue) */
+    --primary-color: #007AFF;
+    /* Apple/Standard Blue - Trustworthy */
+    --primary-light: #4D9EFF;
+    --primary-dark: #0051A8;
+
+    /* UI Colors */
+    --bg-color: #F5F7FA;
+    --card-bg: #FFFFFF;
+    --text-main: #333333;
+    --text-muted: #666666;
+    --text-light: #888888;
+
+    /* Accents */
+    --success-color: #34C759;
+    /* Gentle Green */
+    --border-soft: #EAECF0;
+
+    /* Fonts */
+    --font-base: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic Medium", "YuGothic", Meiryo, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+}
+
+body {
+    font-family: var(--font-base);
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    line-height: 1.8;
+    /* Relaxed reading */
+    padding: 40px 20px;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+.container {
+    width: 100%;
+    max-width: 680px;
+    /* Gently wider */
+    margin: 0 auto;
+}
+
+/* --- Warm Header --- */
+.header-section {
+    text-align: center;
+    margin-bottom: 40px;
+    animation: fadeIn 0.8s ease-out;
+}
+
+.logo-area {
+    margin-bottom: 10px;
+}
+
+.site-title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--primary-dark);
+    letter-spacing: 0.05em;
+    margin-bottom: 5px;
+}
+
+.page-title {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    font-weight: normal;
+}
+
+/* --- Gentle Auth --- */
+.auth-card {
+    background: var(--card-bg);
+    padding: 50px 40px;
+    border-radius: 24px;
+    text-align: center;
+    box-shadow: 0 20px 40px rgba(0, 50, 100, 0.05);
+    /* Very soft shadow */
+    border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+.auth-message {
+    font-size: 1.05rem;
+    margin-bottom: 30px;
+    color: var(--text-muted);
+}
+
+.auth-input {
+    width: 100%;
+    max-width: 300px;
+    padding: 18px 20px;
+    font-size: 1.1rem;
+    border: 2px solid var(--border-soft);
+    border-radius: 12px;
+    outline: none;
+    transition: all 0.3s;
+    background: #FAFAFA;
+}
+
+.auth-input:focus {
+    border-color: var(--primary-color);
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
+}
+
+/* --- Hero Intro --- */
+.intro-message {
+    background: #fff;
+    padding: 25px 30px;
+    border-radius: 16px;
+    margin-bottom: 40px;
+    text-align: left;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    border-left: 5px solid var(--primary-color);
+}
+
+.intro-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--primary-dark);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.intro-text {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    line-height: 1.8;
+}
+
+/* --- Account Lists --- */
+.account-section {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.account-card {
+    background: var(--card-bg);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid var(--border-soft);
+}
+
+.account-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+    /* Lift effect */
+}
+
+/* Card Header */
+.card-header {
+    background: #F9FAFC;
+    /* Very subtle gray */
+    padding: 25px 30px;
+    border-bottom: 1px solid var(--border-soft);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.role-badge {
+    background: var(--primary-dark);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: bold;
+    padding: 6px 14px;
+    border-radius: 20px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.user-name {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--text-main);
+}
+
+/* Card Body */
+.card-body {
+    padding: 35px 30px;
+    text-align: center;
+}
+
+.email-display {
+    font-family: monospace;
+    font-size: 1.2rem;
+    color: var(--text-main);
+    background: #F2F5F8;
+    padding: 12px 20px;
+    border-radius: 10px;
+    display: inline-block;
+    margin-bottom: 30px;
+    font-weight: bold;
+    letter-spacing: 0.05em;
+}
+
+/* --- Buttons --- */
+.btn-main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 20px;
+    background: linear-gradient(135deg, #007AFF, #0056B3);
+    color: white;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(0, 122, 255, 0.25);
+    transition: all 0.3s;
+    text-decoration: none;
+    margin-bottom: 20px;
+}
+
+.btn-main:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(0, 122, 255, 0.35);
+    filter: brightness(1.1);
+}
+
+.btn-main .icon {
+    font-size: 1.5rem;
+    margin-right: 12px;
+}
+
+.btn-sub {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    background: transparent;
+    border: 2px solid var(--border-soft);
+    padding: 14px 25px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+}
+
+.btn-sub:hover {
+    background: #fff;
+    border-color: var(--primary-light);
+    color: var(--primary-dark);
+}
+
+/* --- Manual / PC Section --- */
+.manual-wrapper {
+    height: 0;
+    overflow: hidden;
+    transition: height 0.5s ease-in-out;
+}
+
+.manual-wrapper.open {
+    height: auto;
+}
+
+.manual-content {
+    background: #FAFAFA;
+    margin-top: 25px;
+    padding: 25px;
+    border-radius: 16px;
+    border: 1px dashed var(--border-soft);
+    text-align: left;
+    animation: fadeIn 0.5s;
+}
+
+.info-group {
+    margin-bottom: 20px;
+}
+
+.info-label {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    margin-bottom: 6px;
+    display: block;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: 1px solid #eee;
+}
+
+.info-value {
+    font-family: monospace;
+    /* Clear for copying */
+    font-size: 1rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.btn-copy {
+    background: #EDF2F7;
+    border: none;
+    color: #555;
+    font-size: 0.8rem;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-copy:hover {
+    background: #E2E8F0;
+}
+
+/* --- Guide Section --- */
+.guide-container {
+    margin-top: 60px;
+    background: #fff;
+    padding: 40px 30px;
+    border-radius: 20px;
+}
+
+.guide-heading {
+    text-align: center;
+    font-size: 1.25rem;
+    color: var(--primary-dark);
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #F0F0F0;
+}
+
+.steps {
+    list-style: none;
+    position: relative;
+    padding-left: 20px;
+}
+
+/* Vertical Line */
+.steps::before {
+    content: '';
+    position: absolute;
+    left: 20px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #E0E6ED;
+}
+
+.step-card {
+    position: relative;
+    margin-bottom: 40px;
+    padding-left: 40px;
+}
+
+.step-dot {
+    position: absolute;
+    left: -20px;
+    top: 0;
+    width: 40px;
+    height: 40px;
+    background: var(--primary-color);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 10px rgba(0, 122, 255, 0.3);
+    z-index: 2;
+}
+
+.step-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--text-main);
+    margin-bottom: 8px;
+    padding-top: 8px;
+    /* Align with dot */
+}
+
+.step-desc {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    background: #F9F9F9;
+    padding: 15px 20px;
+    border-radius: 12px;
+    border: 1px solid #eee;
+    line-height: 1.7;
+}
+
+/* Footer */
+.footer-simple {
+    text-align: center;
+    margin-top: 50px;
+    font-size: 0.85rem;
+    color: #AAA;
+    padding-bottom: 20px;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Mobile Friendly */
+@media (max-width: 480px) {
+    body {
+        padding: 20px 15px;
+    }
+
+    .card-body {
+        padding: 30px 20px;
+    }
+
+    .email-display {
+        font-size: 0.95rem;
+        padding: 10px 15px;
+    }
+
+    .btn-main {
+        font-size: 1rem;
+    }
+
+    .step-card {
+        padding-left: 30px;
+    }
+
+    .step-dot {
+        width: 32px;
+        height: 32px;
+        font-size: 0.9rem;
+        left: -16px;
+    }
+
+    .steps::before {
+        left: 15px;
+    }
+}
