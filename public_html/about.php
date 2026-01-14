@@ -23,10 +23,10 @@ include 'partials/header.php';
                     </div>
                  </div>
                  <div class="message-content" style="flex: 1.5; min-width: 300px;">
-                    <h3 style="font-size: 1.4rem; margin-bottom: 20px; font-weight: bold;">「一級技能士」の確かな技術で、<br>地元の屋根を守り続けます。</h3>
+                    <h3 style="font-size: 1.4rem; margin-bottom: 20px; font-weight: bold;">「熟練職人」の確かな技術で、<br>地元の屋根を守り続けます。</h3>
                     <p style="margin-bottom: 15px; line-height: 1.8;">
                         ホームページをご覧いただきありがとうございます。<br>
-                        山勇ルーフ代表の村岡です。
+                        山勇ルーフ代表の山本です。
                     </p>
                     <p style="margin-bottom: 15px; line-height: 1.8;">
                         私は京都・伏見を中心に、個人事業として屋根修理や雨漏り修理を行っております。<br>
@@ -71,8 +71,8 @@ include 'partials/header.php';
                 <div class="card">
                     <div class="card-body text-center">
                         <div style="font-size: 3rem; margin-bottom: 10px;">🏅</div>
-                        <h3 class="card-title">一級技能士の確かな技術</h3>
-                        <p style="text-align: left;">国家資格である「一級建築板金技能士」を保有。豊富な経験と知識に裏打ちされた技術力で、どんな屋根の悩みも解決いたします。</p>
+                        <h3 class="card-title">熟練職人の確かな技術</h3>
+                        <p style="text-align: left;">豊富な経験と知識に裏打ちされた技術力で、どんな屋根の悩みも解決いたします。細部までこだわり、長く安心できる屋根に仕上げます。</p>
                     </div>
                 </div>
             </div>

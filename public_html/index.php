@@ -36,7 +36,7 @@ include 'partials/header.php';
             <div class="slide-bg" style="background-image: url('assets/img/hero_slide_work_1767830665270.png');"></div>
             <div class="hero-content">
                 <h1 class="hero-title">
-                    一級技能士の<br>
+                    熟練職人の<br>
                     確かな技術
                 </h1>
                 <br>
@@ -120,6 +120,51 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
     </section>
 
+    <!-- Solar Panel Feature Section (New) -->
+    <section class="section"> <!-- White background to contrast with next gray section -->
+        <div class="container">
+            <h2 class="section-title">
+                太陽光パネル脱着 × 屋根カバー工法
+                <span>SOLAR PANEL & COVER</span>
+            </h2>
+            <div class="solar-feature" style="background: #f9f9f9; padding: 40px; border-radius: 8px; border: 1px solid #eee;">
+                <div class="row" style="display: flex; flex-wrap: wrap; gap: 40px; align-items: center;">
+                    <div class="col-txt" style="flex: 1; min-width: 300px;">
+                        <h3 style="font-size: 1.5rem; color: var(--color-primary); margin-bottom: 20px; font-weight: bold;">
+                            「太陽光パネルがあるから…」と<br>諦めていませんか？
+                        </h3>
+                        <p style="margin-bottom: 20px; line-height: 1.8;">
+                            他社では断られることもある<strong>「太陽光パネル設置屋根」のカバー工法</strong>。<br>
+                            山勇ルーフなら、パネルの取り外しから、屋根のカバー工事、そして再設置まで、すべて<strong style="color: var(--color-secondary); border-bottom: 2px solid var(--color-secondary);">自社職人のみ</strong>で完結可能です。
+                        </p>
+                        <p style="margin-bottom: 20px; line-height: 1.8;">
+                            外部業者を挟まないため、余計な中間マージンをカット。<br>
+                            大切なお住まいの発電機能を守りながら、屋根を新しく美しく生まれ変わらせます。
+                        </p>
+                        <div class="mt-20">
+                            <a href="contact.php" class="btn btn-primary">まずは無料相談から</a>
+                        </div>
+                    </div>
+                    <div class="col-img" style="flex: 1; min-width: 300px;">
+                        <div style="display: flex; gap: 10px;">
+                            <div style="flex: 1;">
+                                <img src="assets/img/solar_before.jpg" alt="施工前：太陽光パネル設置屋根" style="width: 100%; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                                <p style="text-align: center; font-size: 0.9rem; margin-top: 5px; color: #666;">Before</p>
+                            </div>
+                            <div style="display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--color-primary);">
+                                ▶
+                            </div>
+                            <div style="flex: 1;">
+                                <img src="assets/img/solar_after.jpg" alt="施工後：パネル再設置・カバー工法完了" style="width: 100%; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                                <p style="text-align: center; font-size: 0.9rem; margin-top: 5px; color: #666;">After</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- サービス一覧 -->
     <section class="section section-gray">
         <div class="container">
@@ -181,17 +226,29 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 </div>
                 <div class="card">
-                    <div class="card-img">Before/After</div>
+                    <div class="card-img" style="padding: 0; display: flex; flex-direction: column;">
+                        <img src="assets/img/galtecht_after.jpg" alt="After: スーパーガルテクト" style="width: 100%; height: 200px; object-fit: cover;">
+                        <div style="display: flex; background: #f0f0f0; padding: 5px; align-items: center;">
+                            <span style="font-size: 0.7rem; background: #666; color: white; padding: 2px 6px; border-radius: 3px; margin-right: 5px;">Before</span>
+                            <img src="assets/img/galtecht_before.jpg" alt="Before" style="height: 40px; width: auto; object-fit: contain;">
+                        </div>
+                    </div>
                     <div class="card-body">
                         <h3 class="card-title">京都市南区 S様邸</h3>
-                        <p>屋根葺き替え工事（カラーベスト→ガルバリウム）</p>
+                        <p>スーパーガルテクトカバー工法<br><span style="font-size: 0.9rem; color: #666;">（カラーベスト→IG工業 スーパーガルテクト）</span></p>
                     </div>
                 </div>
                 <div class="card">
-                    <div class="card-img">Before/After</div>
+                    <div class="card-img" style="padding: 0; display: flex; flex-direction: column;">
+                        <img src="assets/img/replacement_after.jpg" alt="After: 屋根葺き替え" style="width: 100%; height: 200px; object-fit: cover;">
+                        <div style="display: flex; background: #f0f0f0; padding: 5px; align-items: center;">
+                            <span style="font-size: 0.7rem; background: #666; color: white; padding: 2px 6px; border-radius: 3px; margin-right: 5px;">Before</span>
+                            <img src="assets/img/replacement_before.jpg" alt="Before" style="height: 40px; width: auto; object-fit: contain;">
+                        </div>
+                    </div>
                     <div class="card-body">
-                        <h3 class="card-title">向日市 M様邸</h3>
-                        <p>樋（とい）交換・清掃</p>
+                        <h3 class="card-title">京都市伏見区 N様邸</h3>
+                        <p>屋根葺き替え工事<br><span style="font-size: 0.9rem; color: #666;">（日本瓦→軽量屋根材）</span></p>
                     </div>
                 </div>
             </div>

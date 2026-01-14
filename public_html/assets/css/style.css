@@ -68,7 +68,8 @@ ul {
    Layout Structure
    ========================================================================== */
 .page-wrapper {
-    display: flex;
+    display: block;
+    /* Changed from flex to block to simplify fixed sidebar handling */
     width: 100%;
     min-height: 100vh;
 }
@@ -90,10 +91,13 @@ ul {
 
 .main-content {
     margin-left: var(--sidebar-width);
-    width: calc(100% - var(--sidebar-width));
+    width: auto;
+    /* Uses remaining space automatically */
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    position: relative;
+    /* For z-index context if needed */
 }
 
 /* ==========================================================================
@@ -544,6 +548,8 @@ ul {
     color: #fff;
     padding: 60px 0;
     margin-top: auto;
+    width: 100%;
+    /* Ensure full width relative to main-content */
 }
 
 .footer h2 {
@@ -554,19 +560,23 @@ ul {
 .footer-grid {
     display: grid;
     grid-template-columns: 2fr 1fr;
-    gap: 40px;
-    margin-bottom: 40px;
+    gap: 60px;
+    /* Increased gap for better separation */
+    margin-bottom: 50px;
+    /* Increased margin */
 }
 
 .footer-nav ul {
     display: flex;
-    flex-wrap: wrap;
-    gap: 15px 30px;
+    flex-direction: column;
+    /* Changed to list stack for better visual hierarchy on desktop */
+    gap: 15px;
 }
 
 .footer-nav a {
     color: #ccc;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
+    /* Slightly larger */
 }
 
 .footer-nav a:hover {
@@ -578,7 +588,8 @@ ul {
     font-size: 0.8rem;
     color: #999;
     border-top: 1px solid #555;
-    padding-top: 20px;
+    padding-top: 25px;
+    width: 100%;
 }
 
 /* ==========================================================================
@@ -587,40 +598,41 @@ ul {
 
 /* Hero Section */
 /* Hero Slider */
+/* Hero Slider */
 .hero-slider {
     position: relative;
-    height: 600px;
-    /* Same height as before */
+    /* Height is now determined by content due to Grid, but we can set min/max or fixed */
+    min-height: 600px;
     display: flex;
     align-items: center;
     overflow: hidden;
 }
 
 .slides-container {
-    position: absolute;
-    top: 0;
-    left: 0;
+    /* Changed from absolute to relative grid to allow content to dictate height */
+    position: relative;
     width: 100%;
     height: 100%;
-    z-index: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
 }
 
 .slide {
-    position: absolute;
-    top: 0;
-    left: 0;
+    /* Stack all slides in the same grid cell */
+    grid-column: 1;
+    grid-row: 1;
     width: 100%;
     height: 100%;
     padding: 0 60px;
-    /* Match original content padding */
     display: flex;
     align-items: center;
-    /* Center content vertically */
+    justify-content: flex-start;
+    /* Changed from center to allow explicit control */
     opacity: 0;
     transition: opacity 1.5s ease-in-out;
     z-index: 0;
     pointer-events: none;
-    /* Let clicks pass through inactive slides */
 }
 
 .slide.active {

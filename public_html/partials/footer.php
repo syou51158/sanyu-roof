@@ -60,6 +60,7 @@
 }
 </style>
 
+<script src="assets/js/lightbox.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const footer = document.querySelector('.fixed-footer-grid');
