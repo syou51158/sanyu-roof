@@ -12,9 +12,9 @@ define('COMPANY_INVOICE', 'T4810438817670');
 
 // メール設定
 // 本番公開時はここを実際の受信メールアドレスに変更してください
-define('MAIL_TO', 'info@example.com'); 
+define('MAIL_TO', 'info@sanyu-roof.jp'); 
 // 自動返信メールの送信元（レンタルサーバーのメールアドレス推奨）
-define('MAIL_FROM', 'noreply@' . $_SERVER['HTTP_HOST']); 
+define('MAIL_FROM', 'info@sanyu-roof.jp'); 
 
 // セッション開始（全ページ共通）
 if (session_status() === PHP_SESSION_NONE) {
