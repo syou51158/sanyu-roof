@@ -26,8 +26,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             // ■ Security Notification
             // Send email asynchronously if possible, but for simplicity we send it synchronously here
-            require_once dirname(__DIR__, 2) . '/public_html/config/mail_function.php';
-            require_once dirname(__DIR__, 2) . '/public_html/config/security_helper.php';
+            require_once '../config/mail_function.php';
+            require_once '../config/security_helper.php';
             send_login_notification($user['username']);
 
             header('Location: /admin/index.php');

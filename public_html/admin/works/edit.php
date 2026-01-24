@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
         $ext = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
         $filename = 'work_' . time() . '_after.' . $ext;
-        $upload_dir = dirname(__DIR__, 2) . '/public_html/assets/img/uploads/';
+        $upload_dir = __DIR__ . '/../../assets/img/uploads/';
         if (!is_dir($upload_dir)) mkdir($upload_dir, 0755, true);
         move_uploaded_file($_FILES['image']['tmp_name'], $upload_dir . $filename);
         $image_path = 'assets/img/uploads/' . $filename;
@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_FILES['before_image']) && $_FILES['before_image']['error'] === UPLOAD_ERR_OK) {
         $ext = pathinfo($_FILES['before_image']['name'], PATHINFO_EXTENSION);
         $filename = 'work_' . time() . '_before.' . $ext;
-        $upload_dir = dirname(__DIR__, 2) . '/public_html/assets/img/uploads/';
+        $upload_dir = __DIR__ . '/../../assets/img/uploads/';
         if (!is_dir($upload_dir)) mkdir($upload_dir, 0755, true);
         move_uploaded_file($_FILES['before_image']['tmp_name'], $upload_dir . $filename);
         $before_image_path = 'assets/img/uploads/' . $filename;
