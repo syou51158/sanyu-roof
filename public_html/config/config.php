@@ -80,11 +80,27 @@ function validate_csrf_token($token) {
 
 // データベース接続 (SQLite)
 // ロリポップなどのレンタルサーバーでは、ファイルベースのSQLiteが便利です。
+// データベース接続 (SQLite)
 function get_db_connection() {
-    // データベースファイルのパス
-    // security tips: 本番環境ではwebからアクセスできない場所に置くのが理想ですが、
-    // ここでは簡易的に ../db/ 配下を参照します。
-    $db_path = dirname(__DIR__, 2) . '/db/sanyu_roof.sqlite';
+    // 複数のパス候補を試す（サーバー環境によってディレクトリ構造が異なる場合があるため）
+    $candidates = [
+        dirname(__DIR__, 2) . '/db/sanyu_roof.sqlite', // ローカル/推奨構成 (public_htmlの1つ上)
+        dirname(__DIR__) . '/db/sanyu_roof.sqlite',    // public_htmlの中にdbフォルダがある場合 (Fallback)
+        __DIR__ . '/db/sanyu_roof.sqlite'               // configフォルダ内 (緊急避難)
+    ];
+
+    $db_path = null;
+    foreach ($candidates as $candidate) {
+        if (file_exists($candidate)) {
+            $db_path = $candidate;
+            break;
+        }
+    }
+
+    // 見つからない場合は最初の候補を使用（エラーメッセージ用）
+    if (!$db_path) {
+        $db_path = $candidates[0];
+    }
     
     try {
         $pdo = new PDO("sqlite:" . $db_path);
@@ -92,8 +108,16 @@ function get_db_connection() {
         $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
         return $pdo;
     } catch (PDOException $e) {
-        // 接続エラー時
-        die("Database Connection Failed. Please check the db file path.");
+        // 接続エラー時：デバッグ情報を表示
+        echo "<h1>Database Connection Failed</h1>";
+        echo "<p>データベースに接続できませんでした。</p>";
+        echo "<ul>";
+        echo "<li>Tried Path: " . h($db_path) . "</li>";
+        echo "<li>File Exists: " . (file_exists($db_path) ? 'Yes' : 'No') . "</li>";
+        echo "<li>Error Info: " . h($e->getMessage()) . "</li>";
+        echo "</ul>";
+        echo "<p><strong>解決策:</strong> <code>db</code> フォルダが <code>public_html</code> と同じ階層（または中）にアップロードされているか確認してください。</p>";
+        exit;
     }
 }
 
