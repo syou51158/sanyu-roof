@@ -1,0 +1,20 @@
+# Deny access to sensitive files
+<FilesMatch "^(\.env|\.git|composer\.(json|lock)|package\.json|.*\.sqlite|.*\.db)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Prevent directory listing
+Options -Indexes
+
+# Protect db directory specifically
+<Directory "db">
+    Order allow,deny
+    Deny from all
+</Directory>
+
+# Protect tools directory (reset script should be deleted, but just in case)
+<Directory "tools">
+    Order allow,deny
+    Deny from all
+</Directory>

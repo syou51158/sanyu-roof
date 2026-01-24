@@ -86,6 +86,40 @@ document.addEventListener('DOMContentLoaded', function() {
     setInterval(nextSlide, slideInterval);
 });
 </script>
+</script>
+
+    <!-- News Section -->
+    <?php
+    $pdo = get_db_connection_early(); // Use early connection if global not yet set or just reuse
+    if (!$pdo) $pdo = get_db_connection();
+    
+    // Fetch latest 3 news
+    $stmt = $pdo->query("SELECT * FROM news ORDER BY news_date DESC LIMIT 3");
+    $news_list = $stmt->fetchAll();
+    ?>
+    <?php if (!empty($news_list)): ?>
+    <section class="section" style="padding: 40px 0; background: #fff; border-bottom: 1px solid #eee;">
+        <div class="container">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="font-size: 1.5rem; margin: 0;">お知らせ <span style="font-size: 1rem; color: #999; font-weight: normal;">NEWS</span></h2>
+            </div>
+            <ul class="news-list" style="list-style: none; padding: 0; margin: 0;">
+                <?php foreach ($news_list as $news): ?>
+                <li style="border-bottom: 1px solid #eee; padding: 10px 0; display: flex; flex-wrap: wrap; align-items: baseline;">
+                    <span style="font-size: 0.9rem; color: #666; width: 100px;"><?php echo h(date('Y.m.d', strtotime($news['news_date']))); ?></span>
+                    <?php if ($news['link_url']): ?>
+                        <a href="<?php echo h($news['link_url']); ?>" style="color: #333; text-decoration: none; flex: 1;">
+                            <?php echo h($news['title']); ?>
+                        </a>
+                    <?php else: ?>
+                        <span style="flex: 1;"><?php echo h($news['title']); ?></span>
+                    <?php endif; ?>
+                </li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    </section>
+    <?php endif; ?>
 
     <!-- 3つの安心ポイント -->
     <section class="section">

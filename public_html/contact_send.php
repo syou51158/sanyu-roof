@@ -18,7 +18,24 @@ session_regenerate_id(true);
 
 $data = $_SESSION['form_data'];
 
-// 1. 管理者宛メール作成
+// 1. データベースに保存
+try {
+    $pdo = get_db_connection();
+    $stmt = $pdo->prepare("INSERT INTO inquiries (name, tel, address, email, contact_method, message) VALUES (?, ?, ?, ?, ?, ?)");
+    $stmt->execute([
+        $data['name'],
+        $data['tel'],
+        $data['address'],
+        $data['email'] ?? '',
+        $data['contact_method'],
+        $data['message']
+    ]);
+} catch (PDOException $e) {
+    // ログ保存失敗してもメールは送りたいので、ここではエラーログ等に出力するのみとする
+    error_log("DB Insert Error: " . $e->getMessage());
+}
+
+// 2. 管理者宛メール作成
 $subject_admin = "【" . SITE_NAME . "】Webからお問い合わせがありました";
 $body_admin = <<<EOD
 Webサイトから新しいお問い合わせがありました。
@@ -68,22 +85,23 @@ if (!empty($data['email'])) {
 EOD;
 }
 
+// メール部品の読み込み
+require_once 'config/mail_function.php';
+
 // メール送信設定
 mb_language("Japanese");
 mb_internal_encoding("UTF-8");
 
-$header_admin = "From: " . MAIL_FROM;
-$header_user = "From: " . MAIL_FROM;
+// 送信実行 (管理者へ)
+$result_admin = send_mail_smtp(MAIL_TO, $subject_admin, $body_admin, $data['email'] ?? null);
 
-// 送信実行
-$result = mb_send_mail(MAIL_TO, $subject_admin, $body_admin, $header_admin);
+// 送信実行 (ユーザーへ: メールアドレスがある場合)
+$result_user = ['success' => true]; // デフォルト成功扱い
+if (!empty($data['email'])) {
+    $result_user = send_mail_smtp($data['email'], $subject_user, $body_user);
+}
 
-if ($result) {
-    // ユーザーへの自動返信（メールアドレスがある場合）
-    if (!empty($data['email'])) {
-        mb_send_mail($data['email'], $subject_user, $body_user, $header_user);
-    }
-    
+if ($result_admin['success']) {
     // セッションクリア
     unset($_SESSION['form_data']);
     unset($_SESSION['csrf_token']); // トークン使い切り
@@ -91,8 +109,10 @@ if ($result) {
     header('Location: thanks.php');
     exit;
 } else {
-    // 送信失敗時
-    echo "メールの送信に失敗しました。設定を確認するか、お電話にてご連絡ください。";
-    // 実際にはエラーページへ誘導するのが望ましい
+    // 送信失敗時 (管理者へのメールが失敗した場合)
+    error_log("Mail Send Error: " . $result_admin['message']);
+    echo "申し訳ありません。サーバーのエラーによりメールを送信できませんでした。<br>";
+    echo "エラー詳細: " . h($result_admin['message']);
+    // 実際にはもっと親切なエラーページへ誘導するか、電話番号を表示する
 }
 ?>

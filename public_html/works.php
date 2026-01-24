@@ -16,52 +16,44 @@ include 'partials/header.php';
         <div class="container">
             <p class="text-center mb-40">当社の施工実績の一部をご紹介します。</p>
             
-                <!-- 事例1 -->
-                <div class="card">
-                    <div class="card-img" style="height: 250px; position: relative;">
-                        <!-- Using existing logic if image existed, or placeholder -->
-                        <div style="width: 100%; height: 100%; background: #eee; display: flex; align-items: center; justify-content: center; color: #999;">
-                            施工写真<br>（K様邸）
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <h3 class="card-title">京都市伏見区 K様邸</h3>
-                        <p class="mb-20"><strong>工事内容：</strong>雨漏り修理・瓦一部差し替え</p>
-                        <p>台風の影響で瓦がズレ、雨漏りが発生していました。下地を補修し、割れた瓦を差し替えることで雨漏りが止まりました。</p>
-                    </div>
-                </div>
+            <?php
+            $pdo = get_db_connection();
+            $stmt = $pdo->query("SELECT * FROM works ORDER BY created_at DESC");
+            $works = $stmt->fetchAll();
+            ?>
 
-                <!-- 事例2 -->
+            <?php foreach ($works as $work): ?>
                 <div class="card">
                     <div class="card-img" style="height: 250px; padding: 0; display: flex; flex-direction: column;">
-                         <img src="assets/img/galtecht_after.jpg" class="lightbox-target" alt="After: スーパーガルテクト" style="width: 100%; height: 200px; object-fit: cover;">
-                         <div style="display: flex; background: #f0f0f0; padding: 5px; align-items: center; height: 50px;">
-                            <span style="font-size: 0.7rem; background: #666; color: white; padding: 2px 6px; border-radius: 3px; margin-right: 5px;">Before</span>
-                            <img src="assets/img/galtecht_before.jpg" class="lightbox-target" alt="Before" style="height: 100%; width: auto; object-fit: contain;">
-                         </div>
+                         <?php if (!empty($work['image_path'])): ?>
+                             <img src="<?php echo h($work['image_path']); ?>" class="lightbox-target" alt="After" style="width: 100%; height: 200px; object-fit: cover;">
+                             <?php if (!empty($work['before_image_path'])): ?>
+                                 <div style="display: flex; background: #f0f0f0; padding: 5px; align-items: center; height: 50px;">
+                                    <span style="font-size: 0.7rem; background: #666; color: white; padding: 2px 6px; border-radius: 3px; margin-right: 5px;">Before</span>
+                                    <img src="<?php echo h($work['before_image_path']); ?>" class="lightbox-target" alt="Before" style="height: 100%; width: auto; object-fit: contain;">
+                                 </div>
+                             <?php else: ?>
+                                <div style="height: 50px; background: #f0f0f0;"></div>
+                             <?php endif; ?>
+                         <?php else: ?>
+                            <!-- Image missing placeholder -->
+                            <div style="width: 100%; height: 100%; background: #eee; display: flex; align-items: center; justify-content: center; color: #999;">
+                                No Image
+                            </div>
+                         <?php endif; ?>
                     </div>
                     <div class="card-body">
-                        <h3 class="card-title">京都市南区 S様邸</h3>
-                        <p class="mb-20"><strong>工事内容：</strong>スーパーガルテクト（カバー工法）</p>
-                        <p>経年劣化したカラーベストから、耐久性・断熱性に優れた「スーパーガルテクト」へカバー工法で施工。見違えるほど美しくなりました。</p>
+                        <h3 class="card-title"><?php echo h($work['title']); ?></h3>
+                        <p class="mb-20"><strong>工事内容：</strong><?php echo h($work['category']); ?></p>
+                        <p><?php echo nl2br(h($work['content'])); ?></p>
+                        <!-- Admin Edit Link (Optional, visible if logged in?) -->
+                        <?php if(isset($_SESSION['admin_id'])): ?>
+                            <a href="/admin/works/edit.php?id=<?php echo $work['id']; ?>" style="font-size:0.8rem; color:blue;">[編集]</a>
+                        <?php endif; ?>
                     </div>
                 </div>
+            <?php endforeach; ?>
 
-                <!-- 事例3 -->
-                <div class="card">
-                    <div class="card-img" style="height: 250px; padding: 0; display: flex; flex-direction: column;">
-                         <img src="assets/img/replacement_after.jpg" class="lightbox-target" alt="After: 屋根葺き替え" style="width: 100%; height: 200px; object-fit: cover;">
-                         <div style="display: flex; background: #f0f0f0; padding: 5px; align-items: center; height: 50px;">
-                            <span style="font-size: 0.7rem; background: #666; color: white; padding: 2px 6px; border-radius: 3px; margin-right: 5px;">Before</span>
-                            <img src="assets/img/replacement_before.jpg" class="lightbox-target" alt="Before" style="height: 100%; width: auto; object-fit: contain;">
-                         </div>
-                    </div>
-                    <div class="card-body">
-                        <h3 class="card-title">京都市伏見区 N様邸</h3>
-                        <p class="mb-20"><strong>工事内容：</strong>屋根葺き替え工事</p>
-                        <p>重い日本瓦から、軽量でメンテナンスフリーな最新の屋根材へ葺き替え。耐震対策としても非常に有効なリフォームです。</p>
-                    </div>
-                </div>
             </div>
 
             <!-- New Section: Detail Report -->

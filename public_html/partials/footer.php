@@ -94,5 +94,75 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
+
+<!-- Admin Mode Toolbar (Only visible to logged-in admins) -->
+<?php if (isset($_SESSION['admin_id'])): ?>
+<div class="admin-toolbar">
+    <div class="admin-toolbar-content">
+        <span class="admin-status-icon">🔧</span>
+        <span class="admin-status-text">管理者モードで閲覧中</span>
+        <a href="/admin/index.php" class="admin-return-btn">管理画面に戻る</a>
+    </div>
+</div>
+<style>
+    .admin-toolbar {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: #343a40; /* Dark admin color */
+        color: #fff;
+        padding: 10px 20px;
+        border-radius: 50px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        z-index: 9999; /* Highest priority */
+        font-family: sans-serif;
+        border: 2px solid rgba(255,255,255,0.2);
+        animation: slideIn 0.5s ease-out;
+    }
+    .admin-toolbar-content {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    .admin-status-icon {
+        font-size: 1.2rem;
+    }
+    .admin-status-text {
+        font-weight: bold;
+        font-size: 0.9rem;
+    }
+    .admin-return-btn {
+        background: #007bff;
+        color: white;
+        text-decoration: none;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        transition: background 0.2s, transform 0.2s;
+        font-weight: bold;
+    }
+    .admin-return-btn:hover {
+        background: #0056b3;
+        transform: scale(1.05);
+    }
+    @keyframes slideIn {
+        from { transform: translateY(100px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+    /* Mobile adjustment to avoid overlapping with fixed footer */
+    @media (max-width: 900px) {
+        .admin-toolbar {
+            bottom: 80px; /* Above the mobile footer menu */
+            right: 10px;
+            padding: 8px 15px;
+        }
+        .admin-status-text {
+            font-size: 0.8rem;
+        }
+    }
+</style>
+<?php endif; ?>
+
 </body>
 </html>
+

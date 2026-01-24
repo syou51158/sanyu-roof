@@ -121,7 +121,7 @@ include 'partials/header.php';
 
             <!-- Google Maps Embed -->
             <div class="mt-20" style="height: 400px; background: #eee;">
-                 <iframe src="https://maps.google.co.jp/maps?output=embed&q=京都府京都市伏見区羽束師菱川町569-42&t=m&z=15" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                 <iframe src="https://maps.google.co.jp/maps?output=embed&q=京都府京都市伏見区羽束師菱川町&t=m&z=14" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
             </div>
         </div>
     </section>
