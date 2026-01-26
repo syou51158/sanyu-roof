@@ -65,6 +65,7 @@ define('MAIL_FROM', $settings['mail_from'] ?? 'info@sanyu-roof.jp');
 
 // ユーティリティ関数：XSS対策
 function h($str) {
+    if ($str === null) return '';
     return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');
 }
 
