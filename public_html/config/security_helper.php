@@ -139,7 +139,11 @@ function send_invitation_email($email, $token) {
 (有効期限: 24時間)
 EOD;
 
-    return send_mail_smtp($email, $subject, $body);
+    $result = send_mail_smtp($email, $subject, $body);
+    if (is_array($result)) {
+        return $result['success'];
+    }
+    return $result;
 }
 
 /**
