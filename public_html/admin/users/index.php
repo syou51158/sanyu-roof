@@ -1,6 +1,7 @@
 <?php
 // public_html/admin/users/index.php
 require_once '../../config/config.php';
+require_once '../../config/mail_function.php';
 require_once '../../config/security_helper.php';
 require_login();
 

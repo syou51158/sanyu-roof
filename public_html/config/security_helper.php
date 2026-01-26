@@ -10,20 +10,34 @@ function get_client_details() {
     $ua = $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown';
     
     // 1. Get Location (using free ip-api.com)
-    // Note: This API is free for non-commercial use (up to 45 requests/minute).
-    // For a simple admin panel, this is sufficient.
+    // Refactored to use cURL with timeout to prevent blocking login
     $geo_info = 'Location Unknown';
     if ($ip !== '127.0.0.1' && $ip !== '::1') {
-        try {
-            $json = @file_get_contents("http://ip-api.com/json/{$ip}?fields=status,country,city,isp");
+        if (function_exists('curl_init')) {
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, "http://ip-api.com/json/{$ip}?fields=status,country,city,isp");
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 2); // 2 second timeout
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
+            $json = curl_exec($ch);
+            curl_close($ch);
+            
             if ($json) {
                 $data = json_decode($json, true);
-                if ($data && $data['status'] === 'success') {
+                if ($data && isset($data['status']) && $data['status'] === 'success') {
                     $geo_info = "{$data['country']}, {$data['city']} ({$data['isp']})";
                 }
             }
-        } catch (Exception $e) {
-            // Ignore API errors to not block login
+        } else {
+             // Fallback if cURL is not available (try file_get_contents with error suppression)
+             $context = stream_context_create(['http' => ['timeout' => 2]]);
+             $json = @file_get_contents("http://ip-api.com/json/{$ip}?fields=status,country,city,isp", false, $context);
+             if ($json) {
+                $data = json_decode($json, true);
+                if ($data && isset($data['status']) && $data['status'] === 'success') {
+                    $geo_info = "{$data['country']}, {$data['city']} ({$data['isp']})";
+                }
+             }
         }
     } else {
         $geo_info = 'Localhost';
