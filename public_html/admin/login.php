@@ -29,10 +29,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $update_stmt->execute([$user['id']]);
 
             // ■ Security Notification
-            // Send email asynchronously if possible, but for simplicity we send it synchronously here
-            require_once '../config/mail_function.php';
-            require_once '../config/security_helper.php';
-            send_login_notification($user['username']);
+            try {
+                // Send email asynchronously if possible, but for simplicity we send it synchronously here
+                if (file_exists('../config/mail_function.php') && file_exists('../config/security_helper.php')) {
+                    require_once '../config/mail_function.php';
+                    require_once '../config/security_helper.php';
+                    send_login_notification($user['username']);
+                }
+            } catch (Throwable $e) {
+                // error_log("Login notification failed: " . $e->getMessage());
+                // Do not stop login process even if notification fails
+            }
 
             header('Location: /admin/index.php');
             exit;
