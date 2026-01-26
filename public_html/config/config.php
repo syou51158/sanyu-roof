@@ -1,4 +1,7 @@
 <?php
+// タイムゾーン設定
+date_default_timezone_set('Asia/Tokyo');
+
 // セキュリティヘッダーの送出
 header("X-Frame-Options: SAMEORIGIN");
 header("X-XSS-Protection: 1; mode=block");

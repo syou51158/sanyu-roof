@@ -25,8 +25,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['admin_username'] = $user['username'];
 
             // Update Last Login Time
-            $update_stmt = $pdo->prepare("UPDATE admins SET last_login_at = CURRENT_TIMESTAMP WHERE id = ?");
-            $update_stmt->execute([$user['id']]);
+            $update_stmt = $pdo->prepare("UPDATE admins SET last_login_at = ? WHERE id = ?");
+            $update_stmt->execute([date('Y-m-d H:i:s'), $user['id']]);
 
             // ■ Security Notification
             try {
