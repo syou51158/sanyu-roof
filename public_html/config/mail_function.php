@@ -14,8 +14,8 @@ require_once __DIR__ . '/config.php';
  * @return array ['success' => bool, 'message' => string]
  */
 function send_mail_smtp($to, $subject, $body, $replyTo = null) {
-    // 言語設定
-    mb_language("Japanese");
+    // 言語設定: UTF-8で送信するために 'uni' を設定
+    mb_language("uni");
     mb_internal_encoding("UTF-8");
 
     // 送信元設定
@@ -40,6 +40,14 @@ function send_mail_smtp($to, $subject, $body, $replyTo = null) {
         $recipients = array_map('trim', explode(',', $to));
     } else {
         $recipients[] = trim($to);
+    }
+
+    // ★ Localhost Mocking (for development)
+    if ($_SERVER['REMOTE_ADDR'] === '127.0.0.1' || $_SERVER['REMOTE_ADDR'] === '::1') {
+        $log_file = __DIR__ . '/../debug_emails.log';
+        $log_content = "To: " . implode(', ', $recipients) . "\nSubject: $subject\nDate: " . date('Y-m-d H:i:s') . "\n\n$body\n--------------------------------------------------\n";
+        file_put_contents($log_file, $log_content, FILE_APPEND);
+        return ['success' => true, 'message' => '送信しました (テスト環境: log保存)'];
     }
 
     $success_count = 0;

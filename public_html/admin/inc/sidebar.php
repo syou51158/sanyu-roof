@@ -38,7 +38,12 @@ function is_active($pattern, $uri) {
         </li>
         <li>
             <a href="/admin/profile.php" class="<?php echo is_active('/admin/profile.php', $current_uri); ?>">
-                <span class="icon">🔒</span> ID・パスワード変更
+                <span class="icon">🔒</span> アカウント設定
+            </a>
+        </li>
+        <li>
+            <a href="/admin/users/index.php" class="<?php echo is_active('/admin/users/', $current_uri); ?>">
+                <span class="icon">👥</span> アカウント管理 (ユーザー追加)
             </a>
         </li>
         <li>

@@ -98,4 +98,57 @@ EOD;
         }
     }
 }
+
+/**
+ * Generate Secure Token
+ */
+function generate_token() {
+    return bin2hex(random_bytes(32));
+}
+
+/**
+ * Send Invitation Email
+ */
+function send_invitation_email($email, $token) {
+    if (!function_exists('send_mail_smtp')) return false;
+
+    $url = SITE_URL . "/admin/reset_password.php?token=" . $token . "&action=invite";
+    $subject = "【" . SITE_NAME . "】管理画面への招待";
+    
+    $body = <<<EOD
+管理画面への招待が届いています。
+以下のURLをクリックして、パスワードを設定しアカウントを有効化してください。
+
+■アカウント有効化URL
+{$url}
+
+(有効期限: 24時間)
+EOD;
+
+    return send_mail_smtp($email, $subject, $body);
+}
+
+/**
+ * Send Password Reset Email
+ */
+function send_password_reset_email($email, $token) {
+    if (!function_exists('send_mail_smtp')) return false;
+
+    $url = SITE_URL . "/admin/reset_password.php?token=" . $token;
+    $subject = "【" . SITE_NAME . "】パスワードリセット";
+    
+    $body = <<<EOD
+パスワードリセットのリクエストを受け付けました。
+以下のURLをクリックして、新しいパスワードを設定してください。
+
+■パスワードリセットURL
+{$url}
+
+(有効期限: 1時間)
+
+心当たりがない場合は、このメールを破棄してください。
+EOD;
+
+    return send_mail_smtp($email, $subject, $body);
+}
 ?>

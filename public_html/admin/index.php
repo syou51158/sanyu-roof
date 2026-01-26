@@ -51,11 +51,20 @@ include 'inc/header.php';
         </a>
 
         <!-- Account -->
-        <a href="/admin/profile.php" class="card" style="text-decoration: none; color: inherit; display: block; border-left: 5px solid #17a2b8; transition: transform 0.2s;">
+        <a href="/admin/users/index.php" class="card" style="text-decoration: none; color: inherit; display: block; border-left: 5px solid #17a2b8; transition: transform 0.2s;">
+            <div style="text-align: center;">
+                <span style="font-size: 3.5rem; display: block; margin-bottom: 15px;">👥</span>
+                <h3 style="margin: 0 0 10px 0; font-size: 1.3rem;">アカウント管理</h3>
+                <p style="margin: 0; color: #666; font-size: 0.9rem;">新しい管理者の招待や、<br>既存ユーザーの管理を行います。</p>
+            </div>
+        </a>
+
+        <!-- Profile -->
+        <a href="/admin/profile.php" class="card" style="text-decoration: none; color: inherit; display: block; border-left: 5px solid #20c997; transition: transform 0.2s;">
             <div style="text-align: center;">
                 <span style="font-size: 3.5rem; display: block; margin-bottom: 15px;">🔒</span>
-                <h3 style="margin: 0 0 10px 0; font-size: 1.3rem;">パスワード変更</h3>
-                <p style="margin: 0; color: #666; font-size: 0.9rem;">管理画面のログインパスワードを<br>変更します。</p>
+                <h3 style="margin: 0 0 10px 0; font-size: 1.3rem;">自分の設定</h3>
+                <p style="margin: 0; color: #666; font-size: 0.9rem;">自分のパスワードや<br>ログインIDを変更します。</p>
             </div>
         </a>
     </div>

@@ -24,6 +24,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['admin_id'] = $user['id'];
             $_SESSION['admin_username'] = $user['username'];
 
+            // Update Last Login Time
+            $update_stmt = $pdo->prepare("UPDATE admins SET last_login_at = CURRENT_TIMESTAMP WHERE id = ?");
+            $update_stmt->execute([$user['id']]);
+
             // ■ Security Notification
             // Send email asynchronously if possible, but for simplicity we send it synchronously here
             require_once '../config/mail_function.php';
@@ -69,6 +73,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="form-group">
             <label>ユーザー名</label>
             <input type="text" name="username" class="form-control" require autofocus>
+            <div style="text-align:right; margin-top:5px;">
+                <a href="/admin/forgot_password.php" style="font-size:0.8rem; color:#007bff; text-decoration:none;">パスワードをお忘れの方</a>
+            </div>
         </div>
         <div class="form-group">
             <label>パスワード</label>
