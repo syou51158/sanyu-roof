@@ -1,5 +1,8 @@
 <?php
-$page_title = "お問い合わせ";
+require_once 'config/config.php';
+$page_data = get_page_data('contact');
+$page_title = $page_data['title'] ?? "お問い合わせ";
+$page_description = $page_data['description'] ?? null;
 include 'partials/head.php';
 include 'partials/header.php';
 

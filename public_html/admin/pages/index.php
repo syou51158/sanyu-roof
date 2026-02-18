@@ -7,8 +7,14 @@ $page_title = 'ページ管理';
 $pdo = get_db_connection();
 
 // Fetch all pages
-$stmt = $pdo->query("SELECT * FROM pages ORDER BY id ASC");
-$pages = $stmt->fetchAll();
+try {
+    $stmt = $pdo->query("SELECT * FROM pages ORDER BY id ASC");
+    $pages = $stmt->fetchAll();
+} catch (PDOException $e) {
+    // If table doesn't exist, treat as empty or show specific error (but don't crash 500)
+    $pages = [];
+    $error_message = "データベースエラー: " . h($e->getMessage()) . "<br>まだ初期設定が完了していない可能性があります。<a href='/admin/setup/migration_seo.php'>こちらのセットアップ</a>を実行してください。";
+}
 
 include __DIR__ . '/../inc/header.php';
 ?>
@@ -19,6 +25,12 @@ include __DIR__ . '/../inc/header.php';
     </div>
 
     <div class="card">
+        <?php if (isset($error_message)): ?>
+            <div class="alert alert-danger" style="background:#fce8e6; border:1px solid #fadbd8; color:#7d2424; padding:15px; border-radius:4px; margin-bottom:20px;">
+                <?php echo $error_message; ?>
+            </div>
+        <?php endif; ?>
+
         <table class="table">
             <thead>
                 <tr>

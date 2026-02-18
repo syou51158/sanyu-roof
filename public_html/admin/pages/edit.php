@@ -10,9 +10,13 @@ if (!$id) {
 }
 
 $pdo = get_db_connection();
-$stmt = $pdo->prepare("SELECT * FROM pages WHERE id = ?");
-$stmt->execute([$id]);
-$page = $stmt->fetch();
+try {
+    $stmt = $pdo->prepare("SELECT * FROM pages WHERE id = ?");
+    $stmt->execute([$id]);
+    $page = $stmt->fetch();
+} catch (PDOException $e) {
+    die("データベースエラー: " . h($e->getMessage()) . " <a href='/admin/db_check.php'>復旧ツールはこちら</a>");
+}
 
 if (!$page) {
     die("ページが見つかりません。");
@@ -38,6 +42,25 @@ if ($page['slug'] === 'home') {
         'solar_title' => ['label' => '太陽光セクション: タイトル', 'type' => 'textarea', 'rows' => 2],
         'solar_text' => ['label' => '太陽光セクション: 本文1 (HTML記述可)', 'type' => 'textarea', 'rows' => 4, 'html' => true],
         'solar_text_2' => ['label' => '太陽光セクション: 本文2', 'type' => 'textarea', 'rows' => 3],
+    ];
+} elseif ($page['slug'] === 'works') {
+    $schema = [
+        'lead_text' => ['label' => 'リード文 (一覧の上に表示)', 'type' => 'textarea', 'rows' => 5],
+    ];
+} elseif ($page['slug'] === 'services') {
+    $schema = [
+        'page_heading' => ['label' => 'ページ見出し (英語表記の上)', 'type' => 'text'],
+        'lead_text' => ['label' => 'リード文 (見出しの下に表示)', 'type' => 'textarea', 'rows' => 5],
+    ];
+} elseif ($page['slug'] === 'contact') {
+    $schema = [
+        'lead_text' => ['label' => 'リード文 (フォームの上に表示)', 'type' => 'textarea', 'rows' => 5],
+    ];
+} elseif ($page['slug'] === 'about') {
+    $schema = [
+        'lead_text' => ['label' => 'リード文 (ページ上部)', 'type' => 'textarea', 'rows' => 3],
+        'representative_message_title' => ['label' => '代表挨拶: 見出し', 'type' => 'text'],
+        'representative_message_text' => ['label' => '代表挨拶: 本文', 'type' => 'textarea', 'rows' => 15],
     ];
 }
 

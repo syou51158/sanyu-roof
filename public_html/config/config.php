@@ -135,4 +135,34 @@ function require_login() {
         exit;
     }
 }
+
+// ページデータ取得関数 (CMS)
+function get_page_data($slug) {
+    $pdo = get_db_connection_early();
+    if (!$pdo) $pdo = get_db_connection();
+    
+    $page_data = [
+        'title' => null,
+        'description' => null,
+        'content' => []
+    ];
+    
+    if ($pdo) {
+        try {
+            $stmt = $pdo->prepare("SELECT * FROM pages WHERE slug = ?");
+            $stmt->execute([$slug]);
+            $row = $stmt->fetch();
+            
+            if ($row) {
+                $page_data['title'] = $row['title'];
+                $page_data['description'] = $row['description'];
+                $page_data['content'] = json_decode($row['content'] ?? '{}', true);
+            }
+        } catch (Exception $e) {
+            // DB Error: Return empty defaults
+        }
+    }
+    
+    return $page_data;
+}
 ?>

@@ -1,5 +1,8 @@
 <?php
-$page_title = "工事内容";
+require_once 'config/config.php';
+$page_data = get_page_data('services');
+$page_title = $page_data['title'] ?? "工事内容";
+$page_description = $page_data['description'] ?? null;
 include 'partials/head.php';
 include 'partials/header.php';
 ?>
@@ -7,8 +10,11 @@ include 'partials/header.php';
 <main>
     <div class="section-gray" style="padding: 40px 0;">
         <div class="container text-center">
-            <h1>工事内容</h1>
+            <h1><?php echo h($page_data['content']['page_heading'] ?? '工事内容'); ?></h1>
             <p>Service</p>
+            <?php if (!empty($page_data['content']['lead_text'])): ?>
+                <p style="margin-top: 20px; white-space: pre-wrap;"><?php echo h($page_data['content']['lead_text']); ?></p>
+            <?php endif; ?>
         </div>
     </div>
 

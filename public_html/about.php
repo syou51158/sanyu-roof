@@ -1,5 +1,8 @@
 <?php
-$page_title = "事業者情報";
+require_once 'config/config.php';
+$page_data = get_page_data('about');
+$page_title = $page_data['title'] ?? "事業者情報";
+$page_description = $page_data['description'] ?? null;
 include 'partials/head.php';
 include 'partials/header.php';
 ?>
@@ -23,23 +26,15 @@ include 'partials/header.php';
                     </div>
                  </div>
                  <div class="message-content" style="flex: 1.5; min-width: 300px;">
-                    <h3 style="font-size: 1.4rem; margin-bottom: 20px; font-weight: bold;">「熟練職人」の確かな技術で、<br>地元の屋根を守り続けます。</h3>
-                    <p style="margin-bottom: 15px; line-height: 1.8;">
-                        ホームページをご覧いただきありがとうございます。<br>
-                        山勇ルーフ代表の山本です。
-                    </p>
-                    <p style="margin-bottom: 15px; line-height: 1.8;">
-                        私は京都・伏見を中心に、個人事業として屋根修理や雨漏り修理を行っております。<br>
-                        大手のリフォーム会社や工務店とは違い、営業担当はおらず、私が直接お客様のご要望をお伺いし、現地調査から施工、アフターフォローまで一貫して担当させていただきます。
-                    </p>
-                    <p style="margin-bottom: 15px; line-height: 1.8;">
-                        「職人直営」だからこそ、お客様の声をダイレクトに工事に反映でき、中間マージンをカットした適正価格でのご提供が可能です。<br>
-                        見えない部分の下地処理から徹底的にこだわり、長く安心してお住まいいただける屋根工事をお約束いたします。
-                    </p>
-                    <p style="margin-bottom: 0; line-height: 1.8;">
-                        屋根のことでお困りの際は、ぜひ山勇ルーフにご相談ください。<br>
-                        地元の職人として、誠心誠意対応させていただきます。
-                    </p>
+                    <h3 style="font-size: 1.4rem; margin-bottom: 20px; font-weight: bold;">
+                        <?php echo nl2br(h($page_data['content']['representative_message_title'] ?? "「熟練職人」の確かな技術で、<br>地元の屋根を守り続けます。")); ?>
+                    </h3>
+                    <div style="margin-bottom: 15px; line-height: 1.8;">
+                        <?php 
+                        $default_msg = "ホームページをご覧いただきありがとうございます。\n山勇ルーフ代表の山本です。\n\n私は京都・伏見を中心に、個人事業として屋根修理や雨漏り修理を行っております。\n大手のリフォーム会社や工務店とは違い、営業担当はおらず、私が直接お客様のご要望をお伺いし、現地調査から施工、アフターフォローまで一貫して担当させていただきます。\n\n「職人直営」だからこそ、お客様の声をダイレクトに工事に反映でき、中間マージンをカットした適正価格でのご提供が可能です。\n見えない部分の下地処理から徹底的にこだわり、長く安心してお住まいいただける屋根工事をお約束いたします。\n\n屋根のことでお困りの際は、ぜひ山勇ルーフにご相談ください。\n地元の職人として、誠心誠意対応させていただきます。";
+                        echo nl2br(h($page_data['content']['representative_message_text'] ?? $default_msg)); 
+                        ?>
+                    </div>
                     <p style="margin-top: 30px; font-weight: bold; text-align: right;">
                         山勇ルーフ 代表<br>
                         <span style="font-size: 1.2rem;"><?php echo COMPANY_OWNER; ?></span>

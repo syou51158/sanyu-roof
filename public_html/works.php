@@ -1,5 +1,8 @@
 <?php
-$page_title = "施工事例";
+require_once 'config/config.php';
+$page_data = get_page_data('works');
+$page_title = $page_data['title'] ?? "施工事例";
+$page_description = $page_data['description'] ?? null;
 include 'partials/head.php';
 include 'partials/header.php';
 ?>
@@ -14,7 +17,11 @@ include 'partials/header.php';
 
     <section class="section">
         <div class="container">
-            <p class="text-center mb-40">当社の施工実績の一部をご紹介します。</p>
+            <?php if (!empty($page_data['content']['lead_text'])): ?>
+                <p class="text-center mb-40" style="white-space: pre-wrap;"><?php echo h($page_data['content']['lead_text']); ?></p>
+            <?php else: ?>
+                <p class="text-center mb-40">当社の施工実績の一部をご紹介します。</p>
+            <?php endif; ?>
             
             <?php
             $pdo = get_db_connection();
