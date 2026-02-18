@@ -59,6 +59,9 @@ define('COMPANY_INVOICE', $settings['company_invoice'] ?? 'T4810438817670');
 define('MAIL_TO', $settings['mail_to'] ?? 'info@sanyu-roof.jp'); 
 define('MAIL_FROM', $settings['mail_from'] ?? 'info@sanyu-roof.jp'); 
 
+// SEO
+define('GOOGLE_SEARCH_CONSOLE_TAG', $settings['google_search_console_tag'] ?? ''); 
+
 // 既存のget_db_connectionはそのまま利用 (ただし二重定義避けるか、上記を使い回す)
 // ここでは既存の定義位置を変えるため、下部の定義を維持しつつ、上記は初期化用とする
 

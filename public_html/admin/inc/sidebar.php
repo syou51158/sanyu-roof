@@ -17,6 +17,11 @@ function is_active($pattern, $uri) {
             </a>
         </li>
         <li>
+            <a href="/admin/pages/index.php" class="<?php echo is_active('/admin/pages/', $current_uri); ?>">
+                <span class="icon">📝</span> ページ編集 (SEO)
+            </a>
+        </li>
+        <li>
             <a href="/admin/works/index.php" class="<?php echo is_active('/admin/works/', $current_uri); ?>">
                 <span class="icon">🏠</span> 施工事例の管理
             </a>

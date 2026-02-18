@@ -12,6 +12,11 @@
     <link rel="canonical" href="<?php echo SITE_URL . $_SERVER['REQUEST_URI']; ?>">
     <link rel="icon" href="assets/img/favicon.png">
     
+    <?php if (defined('GOOGLE_SEARCH_CONSOLE_TAG') && GOOGLE_SEARCH_CONSOLE_TAG): ?>
+    <!-- Google Search Console -->
+    <?php echo GOOGLE_SEARCH_CONSOLE_TAG; ?>
+    <?php endif; ?>
+    
     <!-- OGP -->
     <meta property="og:title" content="<?php echo isset($page_title) ? $page_title . ' | ' . SITE_NAME : SITE_NAME; ?>">
     <meta property="og:type" content="website">

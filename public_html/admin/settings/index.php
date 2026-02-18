@@ -16,6 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $settings_to_save = [
         'site_name', 'company_name', 'company_owner', 
         'company_address', 'company_phone', 'company_invoice',
+        'google_search_console_tag',
         'mail_to', 'mail_from'
     ];
 
@@ -83,9 +84,16 @@ include __DIR__ . '/../inc/header.php';
                 <label class="form-label">電話番号</label>
                 <input type="text" name="company_phone" class="form-control" value="<?php echo h(get_setting('company_phone', COMPANY_PHONE)); ?>">
             </div>
-             <div class="form-group">
+            <div class="form-group">
                 <label class="form-label">インボイス番号 (適格請求書発行事業者登録番号)</label>
                 <input type="text" name="company_invoice" class="form-control" value="<?php echo h(get_setting('company_invoice', COMPANY_INVOICE)); ?>">
+            </div>
+
+            <h3 style="margin-top: 40px; border-bottom: 2px solid var(--primary-color); padding-bottom: 10px; margin-bottom: 20px;">SEO設定</h3>
+            <div class="form-group">
+                <label class="form-label">Google Search Console 認証タグ</label>
+                <input type="text" name="google_search_console_tag" class="form-control" value="<?php echo h(get_setting('google_search_console_tag')); ?>" placeholder='例: <meta name="google-site-verification" content="..." />'>
+                <p style="font-size: 0.8rem; color: #666; margin-top: 5px;">Google Search ConsoleのHTMLタグを入力してください。</p>
             </div>
 
             <h3 style="margin-top: 40px; border-bottom: 2px solid var(--primary-color); padding-bottom: 10px; margin-bottom: 20px;">メール設定</h3>

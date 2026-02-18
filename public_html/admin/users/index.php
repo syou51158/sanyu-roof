@@ -23,8 +23,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         $expires = date('Y-m-d H:i:s', strtotime('+24 hours'));
         
         // Insert PENDING admin
-        $stmt = $pdo->prepare("INSERT INTO admins (username, password, email, reset_token, token_expires_at) VALUES ('PENDING', 'PENDING', ?, ?, ?)");
-        if ($stmt->execute([$email, $token, $expires])) {
+        $temp_username = 'PENDING_' . bin2hex(random_bytes(8));
+        $stmt = $pdo->prepare("INSERT INTO admins (username, password, email, reset_token, token_expires_at) VALUES (?, 'PENDING', ?, ?, ?)");
+        if ($stmt->execute([$temp_username, $email, $token, $expires])) {
             require_once '../../config/security_helper.php';
             if (send_invitation_email($email, $token)) {
                 $success = "招待メールを送信しました。";
@@ -84,7 +85,7 @@ include '../inc/header.php';
                     <tr>
                         <td><?php echo h($admin['id']); ?></td>
                         <td>
-                            <?php if ($admin['username'] === 'PENDING'): ?>
+                            <?php if (strpos($admin['username'], 'PENDING') === 0): ?>
                                 <span style="color:#999;">(未設定)</span>
                             <?php else: ?>
                                 <strong><?php echo h($admin['username']); ?></strong>
@@ -96,7 +97,7 @@ include '../inc/header.php';
                             <?php echo $admin['last_login_at'] ? h($admin['last_login_at']) : '<span style="color:#ccc;">-</span>'; ?>
                         </td>
                         <td>
-                            <?php if ($admin['username'] === 'PENDING'): ?>
+                            <?php if (strpos($admin['username'], 'PENDING') === 0): ?>
                                 <span style="background:orange; color:white; padding:2px 6px; border-radius:3px; font-size:0.8rem;">招待中</span>
                             <?php else: ?>
                                 <span style="background:#28a745; color:white; padding:2px 6px; border-radius:3px; font-size:0.8rem;">有効</span>

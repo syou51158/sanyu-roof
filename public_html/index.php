@@ -1,6 +1,29 @@
 <?php
+require_once 'config/config.php'; // Ensure config is loaded first
+
+// Initialize default values
 $page_title = "トップページ";
 $page_description = "京都・伏見の屋根修理・雨漏り工事は山勇ルーフへ。職人直営の適正価格で、急な雨漏りも迅速に対応します。";
+$content = [];
+
+// Fetch page data
+try {
+    $pdo = get_db_connection_early();
+    if (!$pdo) $pdo = get_db_connection();
+    
+    $stmt = $pdo->prepare("SELECT * FROM pages WHERE slug = 'home'");
+    $stmt->execute();
+    $page_data = $stmt->fetch();
+    
+    if ($page_data) {
+        $page_title = $page_data['title'];
+        $page_description = $page_data['description'];
+        $content = json_decode($page_data['content'] ?? '{}', true);
+    }
+} catch (Exception $e) {
+    // If DB fails, fall back to defaults
+}
+
 include 'partials/head.php';
 include 'partials/header.php';
 ?>
@@ -18,14 +41,12 @@ include 'partials/header.php';
             <div class="slide-bg" style="background-image: url('assets/img/hero_slide_team_1767830650378.png');"></div>
             <div class="hero-content">
                 <h1 class="hero-title">
-                    京都・伏見の<br>
-                    屋根修理・雨漏り工事
+                    <?php echo nl2br(h($content['hero_title'] ?? "京都・伏見の\n屋根修理・雨漏り工事")); ?>
                 </h1>
                 <br>
-                <div class="hero-subtitle">職人直営の「<?php echo SITE_NAME; ?>」</div>
+                <div class="hero-subtitle"><?php echo h($content['hero_subtitle'] ?? '職人直営の「' . SITE_NAME . '」'); ?></div>
                 <p class="hero-description">
-                    屋根の点検、修理、葺き替え、雨どい掃除まで。<br>
-                    地元の職人が、あなたの家の屋根を守ります。
+                    <?php echo nl2br(h($content['hero_description'] ?? "屋根の点検、修理、葺き替え、雨どい掃除まで。\n地元の職人が、あなたの家の屋根を守ります。")); ?>
                 </p>
                 <a href="contact.php" class="btn btn-primary mt-20">無料現地調査・お見積もり</a>
             </div>
@@ -132,22 +153,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="card text-center" style="border: none; box-shadow: none;">
                     <div style="font-size: 3rem; margin-bottom: 20px;">⏱️</div>
                     <div class="card-body" style="padding: 0;">
-                        <h3 class="card-title">1. 地域密着・迅速対応</h3>
-                        <p>京都市伏見区を中心に、地域密着で活動しています。急な雨漏りトラブルにも可能な限り迅速に駆けつけます。</p>
+                        <h3 class="card-title"><?php echo h($content['reason_1_title'] ?? '1. 地域密着・迅速対応'); ?></h3>
+                        <p><?php echo nl2br(h($content['reason_1_text'] ?? '京都市伏見区を中心に、地域密着で活動しています。急な雨漏りトラブルにも可能な限り迅速に駆けつけます。')); ?></p>
                     </div>
                 </div>
                 <div class="card text-center" style="border: none; box-shadow: none;">
                     <div style="font-size: 3rem; margin-bottom: 20px;">💰</div>
                     <div class="card-body" style="padding: 0;">
-                        <h3 class="card-title">2. 職人直営・適正価格</h3>
-                        <p>営業会社を挟まない「職人直営」だから、中間マージンが発生しません。高品質な施工を適正価格でご提供します。</p>
+                        <h3 class="card-title"><?php echo h($content['reason_2_title'] ?? '2. 職人直営・適正価格'); ?></h3>
+                        <p><?php echo nl2br(h($content['reason_2_text'] ?? '営業会社を挟まない「職人直営」だから、中間マージンが発生しません。高品質な施工を適正価格でご提供します。')); ?></p>
                     </div>
                 </div>
                 <div class="card text-center" style="border: none; box-shadow: none;">
                     <div style="font-size: 3rem; margin-bottom: 20px;">🤝</div>
                     <div class="card-body" style="padding: 0;">
-                        <h3 class="card-title">3. 安心の提案力</h3>
-                        <p>お客様の予算や要望に合わせて、最適な修理プランをご提案。無理な営業は一切いたしません。</p>
+                        <h3 class="card-title"><?php echo h($content['reason_3_title'] ?? '3. 安心の提案力'); ?></h3>
+                        <p><?php echo nl2br(h($content['reason_3_text'] ?? 'お客様の予算や要望に合わせて、最適な修理プランをご提案。無理な営業は一切いたしません。')); ?></p>
                     </div>
                 </div>
             </div>
@@ -165,15 +186,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="row" style="display: flex; flex-wrap: wrap; gap: 40px; align-items: center;">
                     <div class="col-txt" style="flex: 1; min-width: 300px;">
                         <h3 style="font-size: 1.5rem; color: var(--color-primary); margin-bottom: 20px; font-weight: bold;">
-                            「太陽光パネルがあるから…」と<br>諦めていませんか？
+                            <?php echo nl2br(h($content['solar_title'] ?? "「太陽光パネルがあるから…」と\n諦めていませんか？")); ?>
                         </h3>
                         <p style="margin-bottom: 20px; line-height: 1.8;">
-                            他社では断られることもある<strong>「太陽光パネル設置屋根」のカバー工法</strong>。<br>
-                            山勇ルーフなら、パネルの取り外しから、屋根のカバー工事、そして再設置まで、すべて<strong style="color: var(--color-secondary); border-bottom: 2px solid var(--color-secondary);">自社職人のみ</strong>で完結可能です。
+                            <?php echo $content['solar_text'] ?? "他社では断られることもある<strong>「太陽光パネル設置屋根」のカバー工法</strong>。<br>山勇ルーフなら、パネルの取り外しから、屋根のカバー工事、そして再設置まで、すべて<strong style=\"color: var(--color-secondary); border-bottom: 2px solid var(--color-secondary);\">自社職人のみ</strong>で完結可能です。"; ?>
                         </p>
                         <p style="margin-bottom: 20px; line-height: 1.8;">
-                            外部業者を挟まないため、余計な中間マージンをカット。<br>
-                            大切なお住まいの発電機能を守りながら、屋根を新しく美しく生まれ変わらせます。
+                            <?php echo nl2br(h($content['solar_text_2'] ?? "外部業者を挟まないため、余計な中間マージンをカット。\n大切なお住まいの発電機能を守りながら、屋根を新しく美しく生まれ変わらせます。")); ?>
                         </p>
                         <div class="mt-20">
                             <a href="contact.php" class="btn btn-primary">まずは無料相談から</a>
