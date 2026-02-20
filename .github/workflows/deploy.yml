@@ -34,6 +34,18 @@ jobs:
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           
+          # Add newline to end of key if missing (fix for libcrypto error)
+          echo "" >> ~/.ssh/id_rsa
+          
+          # Debug: Check key format (safe output)
+          echo "Key first line:"
+          head -n 1 ~/.ssh/id_rsa
+          echo "Key last line:"
+          tail -n 1 ~/.ssh/id_rsa
+          
+          # Add host to known_hosts to avoid interactive prompt
+          ssh-keyscan -p $SSH_PORT -H $SSH_HOST >> ~/.ssh/known_hosts
+          
           # Deploy using rsync directly
           rsync -avz --delete \
             --exclude '.DS_Store' \
