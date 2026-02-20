@@ -1,0 +1,35 @@
+name: Deploy to Lolipop
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+
+      - name: Check PHP syntax
+        run: find public_html -name "*.php" -print0 | xargs -0 -n1 php -l
+
+      - name: Deploy via Rsync
+        uses: easingthemes/ssh-deploy@v5.0.0
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          REMOTE_HOST: ${{ secrets.SSH_HOST }}
+          REMOTE_USER: ${{ secrets.SSH_USER }}
+          REMOTE_PORT: ${{ secrets.SSH_PORT }}
+          SOURCE: "public_html/"
+          TARGET: "web/sanyu-roof.jp/"
+          ARGS: "-avz --delete --exclude 'db/' --exclude 'debug_emails.log' --exclude '.DS_Store'"
