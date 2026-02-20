@@ -21,6 +21,7 @@ function is_active($pattern, $uri) {
                 <span class="icon">📝</span> ページ編集 (SEO)
             </a>
         </li>
+        <?php if (($_SESSION['role'] ?? 'admin') !== 'seo'): ?>
         <li>
             <a href="/admin/works/index.php" class="<?php echo is_active('/admin/works/', $current_uri); ?>">
                 <span class="icon">🏠</span> 施工事例の管理
@@ -51,6 +52,7 @@ function is_active($pattern, $uri) {
                 <span class="icon">👥</span> アカウント管理 (ユーザー追加)
             </a>
         </li>
+        <?php endif; ?>
         <li>
             <a href="/" target="_blank">
                 <span class="icon">🌐</span> サイトを確認

@@ -120,16 +120,16 @@ include __DIR__ . '/../inc/header.php';
                 <div class="card">
                     <h3 class="card-title" style="margin-top:0;">SEO設定 (メタデータ)</h3>
                     
-                    <div class="form-group">
-                        <label class="form-label">ページのタイトル (&lt;title&gt;)</label>
-                        <input type="text" name="title" class="form-control" value="<?php echo h($page['title']); ?>">
-                        <p class="form-help">検索結果のタイトルとして表示されます。</p>
+                    <div class="form-group" style="margin-bottom: 25px;">
+                        <label class="form-label" style="font-weight:bold; font-size:1.1rem; border-left: 4px solid var(--primary-color); padding-left:10px;">ページのタイトル (&lt;title&gt;) <span id="title_count" style="font-size:0.9rem; font-weight:normal; margin-left:10px; padding:3px 8px; border-radius:10px; background:#eee;"></span></label>
+                        <input type="text" name="title" id="title_input" class="form-control" value="<?php echo h($page['title']); ?>" style="font-size: 1.1rem; padding: 12px;">
+                        <p class="form-help" style="color:#666; font-size:0.85rem; margin-top:5px;">検索結果のタイトルとしてブラウザのタブ等に表示されます。（<b>推奨: 30〜35文字程度</b>）</p>
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">ページの説明 (meta description)</label>
-                        <textarea name="description" class="form-control" rows="4"><?php echo h($page['description']); ?></textarea>
-                        <p class="form-help">検索結果のスニペットとして表示される説明文です。120文字程度が推奨です。</p>
+                        <label class="form-label" style="font-weight:bold; font-size:1.1rem; border-left: 4px solid var(--primary-color); padding-left:10px;">ページの説明 (meta description) <span id="desc_count" style="font-size:0.9rem; font-weight:normal; margin-left:10px; padding:3px 8px; border-radius:10px; background:#eee;"></span></label>
+                        <textarea name="description" id="desc_input" class="form-control" rows="5" style="font-size: 1rem; padding: 12px; line-height: 1.5;"><?php echo h($page['description']); ?></textarea>
+                        <p class="form-help" style="color:#666; font-size:0.85rem; margin-top:5px;">検索結果のスニペットとしてタイトルの下に表示される説明文です。（<b>推奨: 100〜120文字程度</b>）</p>
                     </div>
                 </div>
             </div>
@@ -143,8 +143,8 @@ include __DIR__ . '/../inc/header.php';
                         <p>このページには編集可能なコンテンツエリアが定義されていません。</p>
                     <?php else: ?>
                         <?php foreach ($schema as $key => $field): ?>
-                            <div class="form-group">
-                                <label class="form-label"><?php echo h($field['label']); ?></label>
+                            <div class="form-group" style="padding-bottom: 20px; border-bottom: 1px dashed #eee;">
+                                <label class="form-label" style="font-weight:bold; font-size:1.05rem; display:block; margin-bottom:8px;">📝 <?php echo h($field['label']); ?></label>
                                 
                                 <?php if ($field['type'] === 'textarea'): ?>
                                     <textarea name="content[<?php echo $key; ?>]" class="form-control" rows="<?php echo $field['rows']; ?>"><?php echo isset($field['html']) && $field['html'] ? htmlspecialchars($content_data[$key] ?? '', ENT_QUOTES) : h($content_data[$key] ?? ''); ?></textarea>
@@ -172,5 +172,36 @@ include __DIR__ . '/../inc/header.php';
     margin-top: 5px;
 }
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const titleInput = document.getElementById('title_input');
+    const titleCount = document.getElementById('title_count');
+    const descInput = document.getElementById('desc_input');
+    const descCount = document.getElementById('desc_count');
+
+    function updateCount(input, counter, maxGood) {
+        if(!input) return;
+        const len = input.value.length;
+        counter.textContent = len + ' 文字';
+        if(len > maxGood) {
+            counter.style.background = '#fce8e6';
+            counter.style.color = '#d9534f';
+        } else {
+            counter.style.background = '#e6f4ea';
+            counter.style.color = '#1e8e3e';
+        }
+    }
+
+    if(titleInput) {
+        titleInput.addEventListener('input', () => updateCount(titleInput, titleCount, 35));
+        updateCount(titleInput, titleCount, 35);
+    }
+    if(descInput) {
+        descInput.addEventListener('input', () => updateCount(descInput, descCount, 120));
+        updateCount(descInput, descCount, 120);
+    }
+});
+</script>
 
 <?php include __DIR__ . '/../inc/footer.php'; ?>

@@ -14,6 +14,17 @@ include 'inc/header.php';
     </div>
 
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px;">
+        
+        <!-- Page Management (SEO) -->
+        <a href="/admin/pages/index.php" class="card" style="text-decoration: none; color: inherit; display: block; border-left: 5px solid var(--primary-color); transition: transform 0.2s;">
+            <div style="text-align: center;">
+                <span style="font-size: 3.5rem; display: block; margin-bottom: 15px;">📝</span>
+                <h3 style="margin: 0 0 10px 0; font-size: 1.3rem;">ページ編集 (SEO)</h3>
+                <p style="margin: 0; color: #666; font-size: 0.9rem;">各ページのメタ情報（Title/Description）や<br>テキスト内容を更新します。</p>
+            </div>
+        </a>
+
+        <?php if (($_SESSION['role'] ?? 'admin') !== 'seo'): ?>
         <!-- Works -->
         <a href="/admin/works/index.php" class="card" style="text-decoration: none; color: inherit; display: block; border-left: 5px solid #007bff; transition: transform 0.2s;">
             <div style="text-align: center;">
@@ -58,7 +69,8 @@ include 'inc/header.php';
                 <p style="margin: 0; color: #666; font-size: 0.9rem;">新しい管理者の招待や、<br>既存ユーザーの管理を行います。</p>
             </div>
         </a>
-
+        <?php endif; ?>
+        
         <!-- Profile -->
         <a href="/admin/profile.php" class="card" style="text-decoration: none; color: inherit; display: block; border-left: 5px solid #20c997; transition: transform 0.2s;">
             <div style="text-align: center;">

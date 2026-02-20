@@ -23,6 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             session_regenerate_id(true); // Prevent session fixation
             $_SESSION['admin_id'] = $user['id'];
             $_SESSION['admin_username'] = $user['username'];
+            $_SESSION['role'] = $user['role'] ?? 'admin';
 
             // Update Last Login Time
             $update_stmt = $pdo->prepare("UPDATE admins SET last_login_at = ? WHERE id = ?");

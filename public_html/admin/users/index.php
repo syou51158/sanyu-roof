@@ -22,10 +22,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         $token = generate_token();
         $expires = date('Y-m-d H:i:s', strtotime('+24 hours'));
         
+        $role = $_POST['role'] ?? 'admin';
         // Insert PENDING admin
         $temp_username = 'PENDING_' . bin2hex(random_bytes(8));
-        $stmt = $pdo->prepare("INSERT INTO admins (username, password, email, reset_token, token_expires_at) VALUES (?, 'PENDING', ?, ?, ?)");
-        if ($stmt->execute([$temp_username, $email, $token, $expires])) {
+        $stmt = $pdo->prepare("INSERT INTO admins (username, password, email, reset_token, token_expires_at, role) VALUES (?, 'PENDING', ?, ?, ?, ?)");
+        if ($stmt->execute([$temp_username, $email, $token, $expires, $role])) {
             require_once '../../config/security_helper.php';
             if (send_invitation_email($email, $token)) {
                 $success = "招待メールを送信しました。";
@@ -61,9 +62,13 @@ include '../inc/header.php';
             <form method="post">
                 <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
                 <input type="hidden" name="action" value="invite">
-                <div style="display:flex; gap:10px;">
-                    <input type="email" name="email" class="form-control" placeholder="相手のメールアドレス" required>
-                    <button type="submit" class="btn btn-primary">招待メールを送る</button>
+                <div style="display:flex; gap:10px; align-items:center;">
+                    <input type="email" name="email" class="form-control" placeholder="相手のメールアドレス" required style="flex: 2;">
+                    <select name="role" class="form-control" style="flex: 1;">
+                        <option value="admin">全権限 (オーナー)</option>
+                        <option value="seo">SEO・ページ編集のみ (業者用)</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary" style="white-space:nowrap;">招待メールを送る</button>
                 </div>
             </form>
         </div>
@@ -76,6 +81,7 @@ include '../inc/header.php';
                         <th>ユーザー名</th>
                         <th>メールアドレス</th>
                         <th>最終ログイン</th>
+                        <th>権限</th>
                         <th>ステータス</th>
                         <th>操作</th>
                     </tr>
@@ -95,6 +101,13 @@ include '../inc/header.php';
                         <td><?php echo h($admin['email']); ?></td>
                         <td>
                             <?php echo $admin['last_login_at'] ? h($admin['last_login_at']) : '<span style="color:#ccc;">-</span>'; ?>
+                        </td>
+                        <td>
+                            <?php if (($admin['role'] ?? 'admin') === 'seo'): ?>
+                                <span style="background:#17a2b8; color:white; padding:2px 6px; border-radius:3px; font-size:0.8rem;">SEO用</span>
+                            <?php else: ?>
+                                <span style="background:#6c757d; color:white; padding:2px 6px; border-radius:3px; font-size:0.8rem;">全権限</span>
+                            <?php endif; ?>
                         </td>
                         <td>
                             <?php if (strpos($admin['username'], 'PENDING') === 0): ?>
