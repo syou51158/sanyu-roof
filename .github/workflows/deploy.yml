@@ -34,16 +34,13 @@ jobs:
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           
-          # Add newline to end of key if missing (fix for libcrypto error)
-          echo "" >> ~/.ssh/id_rsa
+          # Fix potential key format issues (add newline if missing)
+          # Use printf to ensure no extra newline is added if one exists, but ensure valid end
+          if [ -n "$(tail -c 1 ~/.ssh/id_rsa)" ]; then
+              echo "" >> ~/.ssh/id_rsa
+          fi
           
-          # Debug: Check key format (safe output)
-          echo "Key first line:"
-          head -n 1 ~/.ssh/id_rsa
-          echo "Key last line:"
-          tail -n 1 ~/.ssh/id_rsa
-          
-          # Add host to known_hosts to avoid interactive prompt
+          # Register host key
           ssh-keyscan -p $SSH_PORT -H $SSH_HOST >> ~/.ssh/known_hosts
           
           # Deploy using rsync directly
