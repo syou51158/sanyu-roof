@@ -32,4 +32,5 @@ jobs:
           REMOTE_PORT: ${{ secrets.SSH_PORT }}
           SOURCE: "public_html/"
           TARGET: "web/sanyu-roof.jp/"
-          ARGS: "-avz --delete --exclude 'db/' --exclude 'debug_emails.log' --exclude '.DS_Store'"
+          ARGS: "-avz --delete"
+          EXCLUDE: ".DS_Store, debug_emails.log, db/"
