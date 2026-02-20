@@ -31,22 +31,41 @@ jobs:
           SSH_PORT: ${{ secrets.SSH_PORT }}
         run: |
           mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          
+          # Write key to file using printf to preserve newlines strictly
+          printf "%s\n" "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          
+          # Remove carriage returns (Windows line endings) just in case
+          tr -d '\r' < ~/.ssh/id_rsa > ~/.ssh/id_rsa.tmp && mv ~/.ssh/id_rsa.tmp ~/.ssh/id_rsa
+          
+          # Ensure strict permissions
           chmod 600 ~/.ssh/id_rsa
           
-          # Fix potential key format issues (add newline if missing)
-          # Use printf to ensure no extra newline is added if one exists, but ensure valid end
+          # Ensure the key ends with a newline (OpenSSH requirement)
+          # If the last byte is not a newline, append one
           if [ -n "$(tail -c 1 ~/.ssh/id_rsa)" ]; then
               echo "" >> ~/.ssh/id_rsa
           fi
+          
+          # Debug: Check key format (safe, don't reveal full key)
+          echo "Key file info:"
+          ls -l ~/.ssh/id_rsa
+          echo "Line count:"
+          wc -l < ~/.ssh/id_rsa
+          echo "First line:"
+          head -n 1 ~/.ssh/id_rsa
+          echo "Last line:"
+          tail -n 1 ~/.ssh/id_rsa
           
           # Register host key
           ssh-keyscan -p $SSH_PORT -H $SSH_HOST >> ~/.ssh/known_hosts
           
           # Deploy using rsync directly
+          # Added -o PubkeyAcceptedKeyTypes=+ssh-rsa to support older servers like Lolipop
+          # Added -o HostKeyAlgorithms=+ssh-rsa just in case
           rsync -avz --delete \
             --exclude '.DS_Store' \
             --exclude 'debug_emails.log' \
             --exclude 'db/' \
-            -e "ssh -p $SSH_PORT -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no" \
+            -e "ssh -p $SSH_PORT -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -o PubkeyAcceptedKeyTypes=+ssh-rsa -o HostKeyAlgorithms=+ssh-rsa" \
             public_html/ $SSH_USER@$SSH_HOST:web/sanyu-roof.jp/
