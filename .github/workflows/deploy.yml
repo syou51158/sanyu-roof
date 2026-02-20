@@ -23,14 +23,21 @@ jobs:
       - name: Check PHP syntax
         run: find public_html -name "*.php" -print0 | xargs -0 -n1 php -l
 
-      - name: Deploy via Rsync
-        uses: easingthemes/ssh-deploy@v5.0.0
+      - name: Setup SSH and Deploy
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          REMOTE_HOST: ${{ secrets.SSH_HOST }}
-          REMOTE_USER: ${{ secrets.SSH_USER }}
-          REMOTE_PORT: ${{ secrets.SSH_PORT }}
-          SOURCE: "public_html/"
-          TARGET: "web/sanyu-roof.jp/"
-          ARGS: "-avz --delete"
-          EXCLUDE: ".DS_Store, debug_emails.log, db/"
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          
+          # Deploy using rsync directly
+          rsync -avz --delete \
+            --exclude '.DS_Store' \
+            --exclude 'debug_emails.log' \
+            --exclude 'db/' \
+            -e "ssh -p $SSH_PORT -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no" \
+            public_html/ $SSH_USER@$SSH_HOST:web/sanyu-roof.jp/
