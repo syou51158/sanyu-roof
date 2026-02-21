@@ -33,64 +33,78 @@ jobs:
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
           
-          echo "=== SSH SETUP DEBUG ==="
+          echo "=== SSH SETUP START ==="
           
-          # Check if secrets are present (without revealing them)
-          if [ -z "$SSH_PRIVATE_KEY" ]; then
-            echo "ERROR: SSH_PRIVATE_KEY secret is empty!"
-            exit 1
-          fi
-          if [ -z "$SSH_HOST" ]; then
-            echo "ERROR: SSH_HOST secret is empty!"
-            exit 1
-          fi
+          # Check variables
+          if [ -z "$SSH_PRIVATE_KEY" ]; then echo "ERROR: SSH_PRIVATE_KEY is empty"; exit 1; fi
+          if [ -z "$SSH_HOST" ]; then echo "ERROR: SSH_HOST is empty"; exit 1; fi
           
-          # Use printf to handle newlines correctly
+          # 1. Write key exactly as provided first
           printf "%s\n" "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           
-          # Fix potential newline issues
-          # Remove CR (Windows) and ensure trailing newline
-          tr -d '\r' < ~/.ssh/id_rsa > ~/.ssh/id_rsa.tmp && mv ~/.ssh/id_rsa.tmp ~/.ssh/id_rsa
-          if [ -n "$(tail -c 1 ~/.ssh/id_rsa)" ]; then
-              echo "" >> ~/.ssh/id_rsa
+          # 2. Check if valid. If not, try to repair.
+          if ! ssh-keygen -l -f ~/.ssh/id_rsa > /dev/null 2>&1; then
+              echo "WARNING: Initial key check failed. Attempting to repair format..."
+              
+              # Backup original
+              cp ~/.ssh/id_rsa ~/.ssh/id_rsa.bak
+              
+              # Read content
+              KEY_CONTENT=$(cat ~/.ssh/id_rsa)
+              LINES=$(wc -l < ~/.ssh/id_rsa)
+              
+              # Repair Strategy 1: One-liner with spaces (Common copy-paste error)
+              # If line count is small (e.g. < 5) and contains spaces
+              if [ "$LINES" -lt 5 ]; then
+                  echo "Detected possible one-line key. Reformatting..."
+                  
+                  # Strip existing headers if any (to re-add them cleanly)
+                  CLEAN_BODY=$(echo "$KEY_CONTENT" | sed -e 's/-----BEGIN [A-Z ]*-----//g' -e 's/-----END [A-Z ]*-----//g' | tr -d ' \n\r')
+                  
+                  # Detect key type (default to RSA or OPENSSH)
+                  if echo "$KEY_CONTENT" | grep -q "OPENSSH"; then
+                      HEADER="-----BEGIN OPENSSH PRIVATE KEY-----"
+                      FOOTER="-----END OPENSSH PRIVATE KEY-----"
+                  else
+                      HEADER="-----BEGIN RSA PRIVATE KEY-----"
+                      FOOTER="-----END RSA PRIVATE KEY-----"
+                  fi
+                  
+                  # Reconstruct: Header -> Body (folded) -> Footer
+                  echo "$HEADER" > ~/.ssh/id_rsa
+                  echo "$CLEAN_BODY" | fold -w 64 >> ~/.ssh/id_rsa
+                  echo "$FOOTER" >> ~/.ssh/id_rsa
+              fi
           fi
-
-          echo "Key file stats:"
-          ls -l ~/.ssh/id_rsa
           
-          # CRITICAL: Validate Key Format
-          echo "Validating key format..."
-          if ! ssh-keygen -l -f ~/.ssh/id_rsa; then
-             echo "FATAL ERROR: The SSH key file is invalid or corrupted."
-             echo "This usually means the secret in GitHub is malformed."
-             echo "First line of key file:"
-             head -n 1 ~/.ssh/id_rsa
-             exit 1
+          # 3. Final Validation
+          echo "Validating key..."
+          if ssh-keygen -l -f ~/.ssh/id_rsa; then
+              echo "Key is VALID."
           else
-             echo "Key format is VALID."
-             ssh-keygen -l -f ~/.ssh/id_rsa
+              echo "FATAL: Key is still invalid after repair attempt."
+              echo "First line:"
+              head -n 1 ~/.ssh/id_rsa
+              # Don't exit here, let ssh-agent try anyway as a last resort
           fi
           
-          # Start SSH Agent
+          # 4. Start Agent
           eval $(ssh-agent -s)
-          ssh-add ~/.ssh/id_rsa
+          # Add key (silence error to avoid stopping workflow if bad, but log it)
+          ssh-add ~/.ssh/id_rsa || echo "Warning: ssh-add failed"
           
-          # Host Key Scan (with fallback)
-          echo "Scanning host key..."
-          ssh-keyscan -p $SSH_PORT -H $SSH_HOST >> ~/.ssh/known_hosts 2>/dev/null || echo "Keyscan failed, relying on strict checking=no"
+          # 5. Host Key
+          ssh-keyscan -p $SSH_PORT -H $SSH_HOST >> ~/.ssh/known_hosts 2>/dev/null
           
-          echo "=== START CONNECTION TEST ==="
-          # Try connecting
-          ssh -vvv -p $SSH_PORT -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PubkeyAcceptedKeyTypes=+ssh-rsa -o HostKeyAlgorithms=+ssh-rsa $SSH_USER@$SSH_HOST "echo 'SSH SUCCESS: Logged in as' \$(whoami)"
+          # 6. Deploy
+          echo "=== STARTING DEPLOY ==="
           
-          echo "=== START RSYNC DEPLOY ==="
-          # Rsync using the agent (no -i flag needed if agent works, but we keep explicit options for safety)
-          # Note: We use -e 'ssh ...' to force options, but we can rely on agent for auth
-          
+          # Using rsync with explicit identity file AND agent forwarding
+          # If agent has key, it uses it. If not, it uses -i file.
           rsync -avz --delete \
             --exclude '.DS_Store' \
             --exclude 'debug_emails.log' \
             --exclude 'db/' \
-            -e "ssh -p $SSH_PORT -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PubkeyAcceptedKeyTypes=+ssh-rsa -o HostKeyAlgorithms=+ssh-rsa" \
+            -e "ssh -p $SSH_PORT -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PubkeyAcceptedKeyTypes=+ssh-rsa -o HostKeyAlgorithms=+ssh-rsa" \
             public_html/ $SSH_USER@$SSH_HOST:web/sanyu-roof.jp/
