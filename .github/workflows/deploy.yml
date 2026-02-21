@@ -52,20 +52,20 @@ jobs:
           ls -l ~/.ssh/id_rsa
           echo "Line count:"
           wc -l < ~/.ssh/id_rsa
-          echo "First line:"
-          head -n 1 ~/.ssh/id_rsa
-          echo "Last line:"
-          tail -n 1 ~/.ssh/id_rsa
           
-          # Register host key
-          ssh-keyscan -p $SSH_PORT -H $SSH_HOST >> ~/.ssh/known_hosts
+          # Debug: Connection Test
+          echo "=== START SSH CONNECTION TEST ==="
+          ssh -vvv -p $SSH_PORT -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PubkeyAcceptedKeyTypes=+ssh-rsa -o HostKeyAlgorithms=+ssh-rsa $SSH_USER@$SSH_HOST "echo 'SSH Connection Successful' && ls -la web/"
+          echo "=== END SSH CONNECTION TEST ==="
           
           # Deploy using rsync directly
           # Added -o PubkeyAcceptedKeyTypes=+ssh-rsa to support older servers like Lolipop
           # Added -o HostKeyAlgorithms=+ssh-rsa just in case
+          # Added -o UserKnownHostsFile=/dev/null to ignore host key checking completely for automation
+          echo "=== START RSYNC DEPLOY ==="
           rsync -avz --delete \
             --exclude '.DS_Store' \
             --exclude 'debug_emails.log' \
             --exclude 'db/' \
-            -e "ssh -p $SSH_PORT -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -o PubkeyAcceptedKeyTypes=+ssh-rsa -o HostKeyAlgorithms=+ssh-rsa" \
+            -e "ssh -p $SSH_PORT -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PubkeyAcceptedKeyTypes=+ssh-rsa -o HostKeyAlgorithms=+ssh-rsa" \
             public_html/ $SSH_USER@$SSH_HOST:web/sanyu-roof.jp/
