@@ -33,44 +33,30 @@ jobs:
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
           
-          # Write raw content to temp file
-          printf "%s" "$SSH_PRIVATE_KEY" > raw_key
+          echo "=== SSH SETUP START ==="
           
-          # Check for headers
-          if grep -q "BEGIN" raw_key; then
-              echo "Headers detected. Using key as is (with formatting fix)."
-              # Ensure unix newlines and trailing newline
-              tr -d '\r' < raw_key > ~/.ssh/id_rsa
-              if [ -n "$(tail -c 1 ~/.ssh/id_rsa)" ]; then
-                  echo "" >> ~/.ssh/id_rsa
-              fi
+          # Clean everything to pure base64
+          # 1. Remove headers/footers if present
+          # 2. Remove all whitespace
+          CLEAN=$(echo "$SSH_PRIVATE_KEY" | sed 's/-----BEGIN [A-Z ]*-----//g' | sed 's/-----END [A-Z ]*-----//g' | tr -d ' \n\r')
+          
+          # Determine type (simple heuristic)
+          if [[ "$CLEAN" == b3BlbnNzaC* ]]; then
+            echo "Detected OpenSSH format base."
+            HEAD="-----BEGIN OPENSSH PRIVATE KEY-----"
+            TAIL="-----END OPENSSH PRIVATE KEY-----"
           else
-              echo "No headers detected. Assuming raw key body."
-              echo "Reconstructing key format..."
-              
-              # Strip all whitespace to get clean base64
-              CLEAN_BODY=$(cat raw_key | tr -d ' \n\r')
-              
-              # Guess type based on content
-              if [[ "$CLEAN_BODY" == b3BlbnNzaC* ]]; then
-                  echo "Detected OpenSSH key format."
-                  HEAD="-----BEGIN OPENSSH PRIVATE KEY-----"
-                  TAIL="-----END OPENSSH PRIVATE KEY-----"
-              else
-                  echo "Defaulting to RSA key format."
-                  HEAD="-----BEGIN RSA PRIVATE KEY-----"
-                  TAIL="-----END RSA PRIVATE KEY-----"
-              fi
-              
-              echo "$HEAD" > ~/.ssh/id_rsa
-              echo "$CLEAN_BODY" | fold -w 64 >> ~/.ssh/id_rsa
-              echo "$TAIL" >> ~/.ssh/id_rsa
+            echo "Assuming RSA format base."
+            HEAD="-----BEGIN RSA PRIVATE KEY-----"
+            TAIL="-----END RSA PRIVATE KEY-----"
           fi
           
-          chmod 600 ~/.ssh/id_rsa
+          # Reconstruct
+          echo "$HEAD" > ~/.ssh/id_rsa
+          echo "$CLEAN" | fold -w 64 >> ~/.ssh/id_rsa
+          echo "$TAIL" >> ~/.ssh/id_rsa
           
-          # Validation (Warn but don't stop, let ssh-agent try)
-          ssh-keygen -l -f ~/.ssh/id_rsa || echo "Warning: Key validation failed, but proceeding..."
+          chmod 600 ~/.ssh/id_rsa
           
           # Start Agent
           eval $(ssh-agent -s)
