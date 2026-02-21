@@ -31,41 +31,66 @@ jobs:
           SSH_PORT: ${{ secrets.SSH_PORT }}
         run: |
           mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
           
-          # Write key to file using printf to preserve newlines strictly
+          echo "=== SSH SETUP DEBUG ==="
+          
+          # Check if secrets are present (without revealing them)
+          if [ -z "$SSH_PRIVATE_KEY" ]; then
+            echo "ERROR: SSH_PRIVATE_KEY secret is empty!"
+            exit 1
+          fi
+          if [ -z "$SSH_HOST" ]; then
+            echo "ERROR: SSH_HOST secret is empty!"
+            exit 1
+          fi
+          
+          # Use printf to handle newlines correctly
           printf "%s\n" "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-          
-          # Remove carriage returns (Windows line endings) just in case
-          tr -d '\r' < ~/.ssh/id_rsa > ~/.ssh/id_rsa.tmp && mv ~/.ssh/id_rsa.tmp ~/.ssh/id_rsa
-          
-          # Ensure strict permissions
           chmod 600 ~/.ssh/id_rsa
           
-          # Ensure the key ends with a newline (OpenSSH requirement)
-          # If the last byte is not a newline, append one
+          # Fix potential newline issues
+          # Remove CR (Windows) and ensure trailing newline
+          tr -d '\r' < ~/.ssh/id_rsa > ~/.ssh/id_rsa.tmp && mv ~/.ssh/id_rsa.tmp ~/.ssh/id_rsa
           if [ -n "$(tail -c 1 ~/.ssh/id_rsa)" ]; then
               echo "" >> ~/.ssh/id_rsa
           fi
-          
-          # Debug: Check key format (safe, don't reveal full key)
-          echo "Key file info:"
+
+          echo "Key file stats:"
           ls -l ~/.ssh/id_rsa
-          echo "Line count:"
-          wc -l < ~/.ssh/id_rsa
           
-          # Debug: Connection Test
-          echo "=== START SSH CONNECTION TEST ==="
-          ssh -vvv -p $SSH_PORT -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PubkeyAcceptedKeyTypes=+ssh-rsa -o HostKeyAlgorithms=+ssh-rsa $SSH_USER@$SSH_HOST "echo 'SSH Connection Successful' && ls -la web/"
-          echo "=== END SSH CONNECTION TEST ==="
+          # CRITICAL: Validate Key Format
+          echo "Validating key format..."
+          if ! ssh-keygen -l -f ~/.ssh/id_rsa; then
+             echo "FATAL ERROR: The SSH key file is invalid or corrupted."
+             echo "This usually means the secret in GitHub is malformed."
+             echo "First line of key file:"
+             head -n 1 ~/.ssh/id_rsa
+             exit 1
+          else
+             echo "Key format is VALID."
+             ssh-keygen -l -f ~/.ssh/id_rsa
+          fi
           
-          # Deploy using rsync directly
-          # Added -o PubkeyAcceptedKeyTypes=+ssh-rsa to support older servers like Lolipop
-          # Added -o HostKeyAlgorithms=+ssh-rsa just in case
-          # Added -o UserKnownHostsFile=/dev/null to ignore host key checking completely for automation
+          # Start SSH Agent
+          eval $(ssh-agent -s)
+          ssh-add ~/.ssh/id_rsa
+          
+          # Host Key Scan (with fallback)
+          echo "Scanning host key..."
+          ssh-keyscan -p $SSH_PORT -H $SSH_HOST >> ~/.ssh/known_hosts 2>/dev/null || echo "Keyscan failed, relying on strict checking=no"
+          
+          echo "=== START CONNECTION TEST ==="
+          # Try connecting
+          ssh -vvv -p $SSH_PORT -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PubkeyAcceptedKeyTypes=+ssh-rsa -o HostKeyAlgorithms=+ssh-rsa $SSH_USER@$SSH_HOST "echo 'SSH SUCCESS: Logged in as' \$(whoami)"
+          
           echo "=== START RSYNC DEPLOY ==="
+          # Rsync using the agent (no -i flag needed if agent works, but we keep explicit options for safety)
+          # Note: We use -e 'ssh ...' to force options, but we can rely on agent for auth
+          
           rsync -avz --delete \
             --exclude '.DS_Store' \
             --exclude 'debug_emails.log' \
             --exclude 'db/' \
-            -e "ssh -p $SSH_PORT -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PubkeyAcceptedKeyTypes=+ssh-rsa -o HostKeyAlgorithms=+ssh-rsa" \
+            -e "ssh -p $SSH_PORT -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PubkeyAcceptedKeyTypes=+ssh-rsa -o HostKeyAlgorithms=+ssh-rsa" \
             public_html/ $SSH_USER@$SSH_HOST:web/sanyu-roof.jp/
