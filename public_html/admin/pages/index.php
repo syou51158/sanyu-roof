@@ -74,18 +74,50 @@ include __DIR__ . '/../inc/header.php';
     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
         <?php if (!empty($pages)): ?>
             <?php foreach ($pages as $p): ?>
-            <div class="card" style="padding: 20px; transition: transform 0.2s;">
-                <h4 style="margin: 0 0 5px 0; font-size: 1.25rem;"><?php echo h($p['name']); ?></h4>
-                <p style="font-size: 0.85rem; color: #666; margin-bottom: 15px;">
-                    URL: <a href="/<?php echo h($p['slug'] === 'home' ? '' : $p['slug'] . '.php'); ?>" target="_blank" style="color:#007bff; text-decoration:none;">/<?php echo h($p['slug'] === 'home' ? '' : $p['slug']); ?></a>
-                </p>
-                <div style="font-size: 0.85rem; color: #444; margin-bottom: 15px; background: #f8f9fa; border: 1px solid #eee; padding: 10px; border-radius: 4px; height: 60px; overflow: hidden;">
-                    <strong style="color: #888; font-size: 0.75rem; display:block; margin-bottom:3px;">現在のTitleタグ</strong>
-                    <?php echo h(mb_strimwidth($p['title'], 0, 40, '...')) ?: '<span style="color:#999">システムデフォルト</span>'; ?>
+            <div class="card" style="padding: 25px; transition: transform 0.2s; border-top: 4px solid var(--primary-color);">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+                    <h4 style="margin: 0; font-size: 1.3rem; color: #333; display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 1.1rem;">📄</span> <?php echo h($p['name']); ?>
+                    </h4>
+                    <?php if($p['slug'] === 'home'): ?>
+                        <span style="background: #e6f4ea; color: #1e8e3e; padding: 3px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: bold;">トップ</span>
+                    <?php else: ?>
+                        <span style="background: #f1f3f4; color: #5f6368; padding: 3px 8px; border-radius: 12px; font-size: 0.75rem;">下層ページ</span>
+                    <?php endif; ?>
                 </div>
+                
+                <!-- Google Search Snippet Preview -->
+                <div style="background: #fff; border: 1px solid #dfe1e5; border-radius: 8px; padding: 15px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                    <div style="font-size: 0.75rem; color: #555; margin-bottom: 5px; font-family: sans-serif;">
+                        <span style="background: #f1f3f4; padding: 2px 6px; border-radius: 4px; margin-right: 5px;">検索プレビュー</span>
+                    </div>
+                    <?php
+                        // Construct absolute URL for preview
+                        $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
+                        $host = $_SERVER['HTTP_HOST'];
+                        $path = $p['slug'] === 'home' ? '' : $p['slug'] . '.php';
+                        $full_url = "{$protocol}://{$host}/{$path}";
+                        
+                        $display_title = $p['title'] ?: $p['name'] . ' | ' . get_setting('company_name');
+                        $display_desc = $p['description'] ?: 'ここにページの説明文（ディスクリプション）が表示されます。検索ユーザーがクリックしたくなるような魅力的な文章を設定しましょう。';
+                    ?>
+                    <div>
+                        <div style="font-size: 0.85rem; color: #202124; margin-bottom: 2px; display: flex; align-items: center; gap: 5px;">
+                            <img src="/assets/img/icon.svg" width="16" height="16" style="border-radius:50%; background:#f1f3f4; padding:2px;" onerror="this.style.display='none'">
+                            <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 250px;"><?php echo h($full_url); ?></span>
+                        </div>
+                        <div style="color: #1a0dab; font-size: 1.25rem; margin-bottom: 3px; cursor: pointer; text-decoration: none; font-family: arial, sans-serif; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
+                            <?php echo h($display_title); ?>
+                        </div>
+                        <div style="color: #4d5156; font-size: 0.85rem; line-height: 1.58; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                            <?php echo h($display_desc); ?>
+                        </div>
+                    </div>
+                </div>
+
                 <div style="display: flex; gap: 10px;">
-                    <a href="edit.php?id=<?php echo h($p['id']); ?>" class="btn btn-primary" style="flex:2; text-align:center;">✏️ 編集画面へ</a>
-                    <a href="/<?php echo h($p['slug'] === 'home' ? '' : $p['slug'] . '.php'); ?>" target="_blank" class="btn btn-outline-secondary" style="flex:1; text-align:center; padding: 10px 0;">確認 ↗</a>
+                    <a href="edit.php?id=<?php echo h($p['id']); ?>" class="btn btn-primary" style="flex:2; text-align:center; box-shadow: 0 2px 4px rgba(0,123,255,0.2);">✏️ 編集画面へ</a>
+                    <a href="<?php echo htmlspecialchars($full_url); ?>" target="_blank" class="btn btn-outline-secondary" style="flex:1; text-align:center; padding: 10px 0;">実際の画面 ↗</a>
                 </div>
             </div>
             <?php endforeach; ?>

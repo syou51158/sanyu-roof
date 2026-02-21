@@ -101,17 +101,20 @@ $content_data = json_decode($page['content'] ?? '{}', true);
 include __DIR__ . '/../inc/header.php';
 ?>
 
-<div class="container">
+<div class="container" style="max-width: 1100px; margin: 0 auto;">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-        <h2 style="margin:0;">ページ編集: <?php echo h($page['name']); ?></h2>
-        <a href="index.php" class="btn btn-outline-secondary">一覧に戻る</a>
+        <h2 style="margin:0; font-size: 1.6rem; display: flex; align-items: center; gap: 10px;">
+            <a href="index.php" style="color: #6c757d; text-decoration: none; font-size: 1.2rem;">←</a>
+            📝 <?php echo h($page['name']); ?> の編集
+        </h2>
+        <a href="/<?php echo h($page['slug'] === 'home' ? '' : $page['slug'] . '.php'); ?>" target="_blank" class="btn btn-outline-secondary">実際のページを確認 ↗</a>
     </div>
 
     <?php if ($msg): ?>
         <div class="alert alert-success"><?php echo h($msg); ?></div>
     <?php endif; ?>
 
-    <form method="post">
+    <form method="post" id="edit_form" style="padding-bottom: 80px;">
         <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
         
         <div class="row" style="display:flex; gap:20px; flex-wrap:wrap;">
@@ -158,10 +161,16 @@ include __DIR__ . '/../inc/header.php';
             </div>
         </div>
 
-        <div style="margin-top: 30px; text-align: center; position: sticky; bottom: 20px; background: rgba(255,255,255,0.9); padding: 15px; border-top: 1px solid #ddd; box-shadow: 0 -2px 10px rgba(0,0,0,0.1);">
-            <button type="submit" class="btn btn-primary" style="min-width: 200px; font-size: 1.1rem;">保存する</button>
-        </div>
+        <div style="margin-top: 30px; border-top: 1px solid #ddd; padding-top: 20px;"></div>
     </form>
+</div>
+
+<!-- Sticky Footer Save Button -->
+<div style="position: fixed; bottom: 0; left: 250px; right: 0; background: rgba(255,255,255,0.95); padding: 15px 30px; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); display: flex; justify-content: flex-end; align-items: center; z-index: 1000; backdrop-filter: blur(5px);">
+    <span id="save_status" style="margin-right: 20px; color: #28a745; font-weight: bold; display: none;">✓ 保存しました</span>
+    <button type="button" onclick="document.getElementById('edit_form').submit();" class="btn btn-primary" style="min-width: 250px; font-size: 1.1rem; box-shadow: 0 4px 6px rgba(0,123,255,0.3); padding: 12px 20px; border-radius: 30px;">
+        💾 変更を保存する
+    </button>
 </div>
 
 <!-- Simple styling for form help -->
