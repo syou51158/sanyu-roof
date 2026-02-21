@@ -20,6 +20,9 @@ jobs:
         with:
           php-version: '8.3'
 
+      - name: Install sshpass
+        run: sudo apt-get update && sudo apt-get install -y sshpass
+
       - name: Check PHP syntax
         run: find public_html -name "*.php" -print0 | xargs -0 -n1 php -l
 
@@ -35,41 +38,72 @@ jobs:
           
           echo "=== SSH SETUP START ==="
           
-          # Clean everything to pure base64
-          # 1. Remove headers/footers if present
-          # 2. Remove all whitespace
-          CLEAN=$(echo "$SSH_PRIVATE_KEY" | sed 's/-----BEGIN [A-Z ]*-----//g' | sed 's/-----END [A-Z ]*-----//g' | tr -d ' \n\r')
+          # Check variables
+          if [ -z "$SSH_PRIVATE_KEY" ]; then echo "ERROR: SSH_PRIVATE_KEY is empty"; exit 1; fi
+          if [ -z "$SSH_HOST" ]; then echo "ERROR: SSH_HOST is empty"; exit 1; fi
           
-          # Determine type (simple heuristic)
-          if [[ "$CLEAN" == b3BlbnNzaC* ]]; then
-            echo "Detected OpenSSH format base."
-            HEAD="-----BEGIN OPENSSH PRIVATE KEY-----"
-            TAIL="-----END OPENSSH PRIVATE KEY-----"
-          else
-            echo "Assuming RSA format base."
-            HEAD="-----BEGIN RSA PRIVATE KEY-----"
-            TAIL="-----END RSA PRIVATE KEY-----"
+          # Determine if it's a Private Key or a Password
+          # Heuristic: Keys contain "BEGIN" or are very long (>200 chars usually)
+          # Passwords are usually shorter and have no "BEGIN"
+          
+          IS_KEY=false
+          if echo "$SSH_PRIVATE_KEY" | grep -q "BEGIN"; then
+              IS_KEY=true
+          elif [ ${#SSH_PRIVATE_KEY} -gt 200 ]; then
+              # Long string but no BEGIN? Might be raw key content.
+              # Let's assume key for now, but fallback if fails.
+              IS_KEY=true
           fi
           
-          # Reconstruct
-          echo "$HEAD" > ~/.ssh/id_rsa
-          echo "$CLEAN" | fold -w 64 >> ~/.ssh/id_rsa
-          echo "$TAIL" >> ~/.ssh/id_rsa
-          
-          chmod 600 ~/.ssh/id_rsa
-          
-          # Start Agent
-          eval $(ssh-agent -s)
-          ssh-add ~/.ssh/id_rsa
-          
-          # Host Key
+          # Register host key
           ssh-keyscan -p $SSH_PORT -H $SSH_HOST >> ~/.ssh/known_hosts 2>/dev/null
           
-          # Deploy
-          echo "=== STARTING DEPLOY ==="
-          rsync -avz --delete \
-            --exclude '.DS_Store' \
-            --exclude 'debug_emails.log' \
-            --exclude 'db/' \
-            -e "ssh -p $SSH_PORT -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PubkeyAcceptedKeyTypes=+ssh-rsa -o HostKeyAlgorithms=+ssh-rsa" \
-            public_html/ $SSH_USER@$SSH_HOST:web/sanyu-roof.jp/
+          if [ "$IS_KEY" = true ]; then
+              echo "Detected SSH Private Key format."
+              
+              # === KEY BASED AUTH ===
+              # Clean everything to pure base64
+              CLEAN=$(echo "$SSH_PRIVATE_KEY" | sed 's/-----BEGIN [A-Z ]*-----//g' | sed 's/-----END [A-Z ]*-----//g' | tr -d ' \n\r')
+              
+              # Determine type
+              if [[ "$CLEAN" == b3BlbnNzaC* ]]; then
+                  HEAD="-----BEGIN OPENSSH PRIVATE KEY-----"
+                  TAIL="-----END OPENSSH PRIVATE KEY-----"
+              else
+                  HEAD="-----BEGIN RSA PRIVATE KEY-----"
+                  TAIL="-----END RSA PRIVATE KEY-----"
+              fi
+              
+              # Reconstruct
+              echo "$HEAD" > ~/.ssh/id_rsa
+              echo "$CLEAN" | fold -w 64 >> ~/.ssh/id_rsa
+              echo "$TAIL" >> ~/.ssh/id_rsa
+              chmod 600 ~/.ssh/id_rsa
+              
+              # Start Agent
+              eval $(ssh-agent -s)
+              ssh-add ~/.ssh/id_rsa
+              
+              echo "=== STARTING DEPLOY (KEY AUTH) ==="
+              rsync -avz --delete \
+                --exclude '.DS_Store' \
+                --exclude 'debug_emails.log' \
+                --exclude 'db/' \
+                -e "ssh -p $SSH_PORT -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PubkeyAcceptedKeyTypes=+ssh-rsa -o HostKeyAlgorithms=+ssh-rsa" \
+                public_html/ $SSH_USER@$SSH_HOST:web/sanyu-roof.jp/
+                
+          else
+              echo "Detected likely SSH Password (no key headers found)."
+              echo "Using sshpass for password authentication."
+              
+              export SSHPASS="$SSH_PRIVATE_KEY"
+              
+              echo "=== STARTING DEPLOY (PASSWORD AUTH) ==="
+              # Use sshpass to provide password
+              rsync -avz --delete \
+                --exclude '.DS_Store' \
+                --exclude 'debug_emails.log' \
+                --exclude 'db/' \
+                -e "sshpass -e ssh -p $SSH_PORT -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PubkeyAcceptedKeyTypes=+ssh-rsa -o HostKeyAlgorithms=+ssh-rsa" \
+                public_html/ $SSH_USER@$SSH_HOST:web/sanyu-roof.jp/
+          fi
